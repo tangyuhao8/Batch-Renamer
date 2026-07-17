@@ -331,6 +331,73 @@ kbd{display:inline-block;padding:2px 7px;background:var(--bg-input);border:1px s
 @keyframes spin{to{transform:rotate(360deg)}}
 .spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border-default);border-top-color:var(--accent-1);border-radius:50%;animation:spin 600ms linear infinite}
 
+/* ─── Context Menu ─── */
+.context-menu{position:fixed;z-index:4000;min-width:200px;background:var(--bg-elevated);backdrop-filter:var(--glass-blur);border:1px solid var(--border-default);border-radius:var(--radius-md);box-shadow:var(--shadow-lg);padding:4px 0;animation:fadeSlideIn 150ms ease}
+.ctx-item{display:flex;align-items:center;gap:8px;padding:8px 14px;font-size:0.82rem;cursor:pointer;transition:background var(--transition-fast);color:var(--text-primary)}
+.ctx-item:hover{background:var(--bg-hover)}
+.ctx-divider{height:1px;background:var(--border-subtle);margin:4px 0}
+
+/* ─── File Info Table ─── */
+.file-info-table{width:100%;border-collapse:collapse}
+.file-info-table td{padding:8px 0;font-size:0.85rem;vertical-align:top}
+.file-info-table td:first-child{color:var(--text-secondary);width:80px;font-weight:500}
+.file-info-table td:last-child{color:var(--text-primary);font-family:'JetBrains Mono',monospace;word-break:break-all}
+
+/* ─── Mobile Tab Bar ─── */
+.mobile-tabs{display:none;background:var(--bg-surface);border-bottom:1px solid var(--border-subtle);flex-shrink:0}
+.mobile-tab{flex:1;padding:10px 0;background:none;border:none;border-bottom:2px solid transparent;color:var(--text-muted);font-family:inherit;font-size:0.82rem;cursor:pointer;transition:all var(--transition-fast);display:flex;align-items:center;justify-content:center;gap:4px}
+.mobile-tab.active{color:var(--accent-2);border-bottom-color:var(--accent-1)}
+.mobile-tab:hover{color:var(--text-primary)}
+
+/* ─── Preview Row Height (for virtual scroll) ─── */
+.preview-table tbody tr{height:32px}
+.preview-table .spacer-row td{padding:0;border:none}
+
 /* ─── Utility ─── */
 .hidden{display:none!important}
 .mono{font-family:'JetBrains Mono',monospace}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE LAYOUT
+   ═══════════════════════════════════════════════ */
+
+/* ─── Tablet: < 1024px → single column with tabs ─── */
+@media (max-width:1023px) {
+  .mobile-tabs{display:flex}
+  .app-body{grid-template-columns:1fr;grid-template-rows:1fr;gap:0}
+  .file-panel,.rules-panel,.preview-panel{grid-column:1;grid-row:1}
+  .file-panel,.rules-panel,.preview-panel{display:none}
+  .file-panel.tab-active,.rules-panel.tab-active,.preview-panel.tab-active{display:flex}
+  .preview-panel.tab-active{grid-row:1}
+  .header-path{max-width:200px}
+}
+
+/* ─── Mobile: < 768px → compact ─── */
+@media (max-width:767px) {
+  html{font-size:13px}
+  .app-header{padding:8px 14px}
+  .header-logo{width:30px;height:30px;font-size:15px}
+  .header-title{font-size:1rem}
+  .header-subtitle{display:none}
+  .header-path{display:none}
+  .panel-header{padding:10px 14px}
+  .file-toolbar{padding:8px 14px;gap:6px}
+  .file-toolbar .search-input{min-width:60px}
+  .rules-toolbar{padding:8px 14px;gap:6px}
+  .preview-toolbar{padding:8px 14px;gap:8px;flex-wrap:wrap}
+  .action-bar{padding:8px 14px;gap:6px;flex-wrap:wrap}
+  .action-bar .btn{padding:8px 14px;font-size:0.8rem}
+  .action-info{width:100%;text-align:center;margin-right:0}
+  .sort-control{gap:2px}
+  .preset-control{gap:2px}
+  .file-item{padding:6px 10px;gap:8px}
+  .rule-card-body{padding:10px}
+  .rule-field{flex-wrap:wrap}
+  .rule-field label{min-width:50px}
+  .preview-table td{padding:5px 10px;font-size:0.75rem}
+  .preview-table th{padding:6px 10px;font-size:0.68rem}
+  .modal{width:95%;max-width:none;margin:10px}
+  .modal-wide{max-width:none}
+  .toast-container{bottom:12px;right:12px;left:12px}
+  .toast{min-width:auto;max-width:none}
+}

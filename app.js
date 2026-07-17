@@ -1,15 +1,13 @@
 /**
- * Batch Renamer Pro v2 — Core Application
- * All 18 improvements: recursive scan, safe rename ordering, full conflict detection,
- * presets, sorting, virtual scroll, drag-drop, rule clone, progress bar, export logs,
- * i18n, theme toggle, extended shortcuts, regex validation, editable preview,
- * rule collapse, PWA, thumbnails.
+ * Batch Renamer Pro v3 — Core Application
+ * v2 features + v3: debounce, shift-select, responsive, context menu,
+ * rule config i18n, preview virtual scroll.
  */
 (() => {
   'use strict';
 
   // ═══════════════════════════════════════════════
-  //  I18N
+  //  I18N (v3 #10: rule config labels added)
   // ═══════════════════════════════════════════════
   const LANG = {
     zh: {
@@ -56,15 +54,34 @@
       enterPresetName:'输入预设名称…',
       presetSaved:n=>`预设「${n}」已保存`,
       presetLoaded:n=>`已加载预设「${n}」`,
-      presetDeleted:n=>`已删除预设「${n}」`,
       noChanges:'无变更项',
       confirmTitle:'确认重命名', undoTitle:'撤销操作',
       savePresetTitle:'保存预设',
       regexValid:'✓', regexInvalid:'✗',
-      customEdit:'自定义',
-      clickToEdit:'点击编辑',
+      customEdit:'自定义', clickToEdit:'双击编辑',
       failedOpen:'无法打开文件夹: ',
       nFailed:n=>`${n} 失败`,
+      // v3 #10: Rule config labels
+      rFind:'查找', rReplaceWith:'替换为', rRegex:'正则表达式', rCaseSensitive:'区分大小写',
+      rPrefixText:'前缀文本', rSuffixText:'后缀文本',
+      rStartValue:'起始值', rStep:'步长', rDigits:'位数', rPosition:'位置',
+      rSeparator:'分隔符', rPosPrefix:'前缀', rPosSuffix:'后缀',
+      rMode:'模式', rLower:'全小写 (abc)', rUpper:'全大写 (ABC)',
+      rTitle:'首字母大写 (Abc)', rCamel:'驼峰 (abcDef)', rSnake:'蛇形 (abc_def)',
+      rStartPos:'起始位', rDeleteCount:'删除数',
+      rRemoveSpaces:'删除空格', rRemoveSpecial:'删除特殊字符',
+      rNewExt:'新扩展名', rFormat:'格式', rDateSource:'日期来源',
+      rCurrentDate:'当前日期', rModifiedDate:'文件修改日期',
+      rInputFind:'输入要查找的文本', rInputReplace:'替换后的文本',
+      rPhPrefix:'如：photo_', rPhSuffix:'如：_final', rPhExt:'如：jpg',
+      // v3 #8: Mobile tabs
+      tabFile:'文件', tabRules:'规则', tabPreview:'预览',
+      // v3 #9: Context menu
+      ctxSelectOnly:'仅选择此文件', ctxDeselect:'取消选择',
+      ctxCopyName:'复制文件名', ctxLocatePreview:'在预览中定位',
+      ctxFileInfo:'文件信息', fileInfoTitle:'文件信息',
+      copied:'已复制', fiName:'文件名', fiSize:'大小',
+      fiModified:'修改时间', fiType:'类型', fiPath:'路径',
     },
     en: {
       subtitle:'Batch File Renaming Tool', selectFolder:'📂 Select Folder',
@@ -110,15 +127,34 @@
       enterPresetName:'Enter preset name…',
       presetSaved:n=>`Preset "${n}" saved`,
       presetLoaded:n=>`Loaded preset "${n}"`,
-      presetDeleted:n=>`Deleted preset "${n}"`,
       noChanges:'No changes',
       confirmTitle:'Confirm Rename', undoTitle:'Undo Operation',
       savePresetTitle:'Save Preset',
       regexValid:'✓', regexInvalid:'✗',
-      customEdit:'custom',
-      clickToEdit:'Click to edit',
+      customEdit:'custom', clickToEdit:'Double-click to edit',
       failedOpen:'Failed to open folder: ',
       nFailed:n=>`${n} failed`,
+      // v3 #10: Rule config labels
+      rFind:'Find', rReplaceWith:'Replace with', rRegex:'Regex', rCaseSensitive:'Case sensitive',
+      rPrefixText:'Prefix text', rSuffixText:'Suffix text',
+      rStartValue:'Start', rStep:'Step', rDigits:'Digits', rPosition:'Position',
+      rSeparator:'Separator', rPosPrefix:'Prefix', rPosSuffix:'Suffix',
+      rMode:'Mode', rLower:'lowercase (abc)', rUpper:'UPPERCASE (ABC)',
+      rTitle:'Title Case (Abc)', rCamel:'camelCase', rSnake:'snake_case',
+      rStartPos:'Start pos', rDeleteCount:'Count',
+      rRemoveSpaces:'Remove spaces', rRemoveSpecial:'Remove special chars',
+      rNewExt:'New extension', rFormat:'Format', rDateSource:'Date source',
+      rCurrentDate:'Current date', rModifiedDate:'File modified date',
+      rInputFind:'Text to find', rInputReplace:'Replacement text',
+      rPhPrefix:'e.g. photo_', rPhSuffix:'e.g. _final', rPhExt:'e.g. jpg',
+      // v3 #8: Mobile tabs
+      tabFile:'Files', tabRules:'Rules', tabPreview:'Preview',
+      // v3 #9: Context menu
+      ctxSelectOnly:'Select only this', ctxDeselect:'Deselect',
+      ctxCopyName:'Copy filename', ctxLocatePreview:'Locate in preview',
+      ctxFileInfo:'File info', fileInfoTitle:'File Information',
+      copied:'Copied', fiName:'Name', fiSize:'Size',
+      fiModified:'Modified', fiType:'Type', fiPath:'Path',
     }
   };
 
@@ -127,12 +163,12 @@
   // ═══════════════════════════════════════════════
   const state = {
     dirHandle: null,
-    files: [],          // { handle, name, relPath, size, lastModified, selected, thumbUrl }
-    allFileNames: [],   // all names in dir (including unselected) for conflict check
-    rules: [],          // { id, type, params, enabled, collapsed }
+    files: [],
+    allFileNames: [],
+    rules: [],
     undoStack: [],
-    customEdits: {},    // { originalName: customNewName }
-    operationLogs: [],  // [{ timestamp, entries:[{old,new}] }]
+    customEdits: {},
+    operationLogs: [],
     nextRuleId: 1,
     searchTerm: '',
     extFilter: '',
@@ -144,6 +180,10 @@
     theme: 'dark',
     rulesAllCollapsed: false,
     thumbnailCache: new Map(),
+    // v3 additions
+    lastClickedVisIdx: null,  // #7 Shift+Click
+    activeTab: 'file',        // #8 Responsive
+    contextFile: null,        // #9 Context menu target
   };
 
   // ═══════════════════════════════════════════════
@@ -181,6 +221,11 @@
     progressCount:$('#progressCount'), progressErrors:$('#progressErrors'),
     dropZone:$('#dropZone'),
     toastContainer:$('#toastContainer'),
+    // v3
+    mobileTabs:$('#mobileTabs'),
+    contextMenu:$('#contextMenu'),
+    fileInfoModal:$('#fileInfoModal'), fileInfoBody:$('#fileInfoBody'),
+    fileInfoCloseBtn:$('#fileInfoCloseBtn'),
   };
 
   // ═══════════════════════════════════════════════
@@ -190,6 +235,11 @@
   function t(key, ...args) {
     const v = LANG[state.lang][key];
     return typeof v === 'function' ? v(...args) : (v || key);
+  }
+  // v3 #5: Debounce
+  function debounce(fn, ms) {
+    let timer;
+    return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); };
   }
   function formatSize(b) {
     if(b<1024)return b+' B';
@@ -244,11 +294,12 @@
     });
   }
   function closeAllModals(){
-    [dom.confirmModal,dom.promptModal,dom.shortcutsModal].forEach(m=>m.classList.remove('open'));
+    [dom.confirmModal,dom.promptModal,dom.shortcutsModal,dom.fileInfoModal].forEach(m=>m.classList.remove('open'));
+    hideContextMenu();
   }
 
   // ═══════════════════════════════════════════════
-  //  FILE SYSTEM (P0 #1: Recursive)
+  //  FILE SYSTEM
   // ═══════════════════════════════════════════════
   async function selectFolder() {
     try {
@@ -268,15 +319,13 @@
     state.thumbnailCache.clear();
     await scanDirectory(state.dirHandle, '');
     sortFiles();
-    // Collect all file names for full conflict check (P0 #3)
     state.allFileNames = state.files.map(f=>f.name);
-    // Populate ext filter
     const exts=[...new Set(state.files.map(f=>splitFilename(f.name).ext.toLowerCase()).filter(Boolean))].sort();
     dom.extFilter.innerHTML=`<option value="">${t('allTypes')}</option>`+exts.map(e=>`<option value="${e}">.${e}</option>`).join('');
     dom.fileSearch.disabled=false;dom.extFilter.disabled=false;
     dom.selectAllCb.disabled=false;dom.selectAllCb.checked=true;
+    state.lastClickedVisIdx=null;
     renderFileList();updatePreview();
-    // Generate thumbnails async (P2 #18)
     generateThumbnails();
   }
 
@@ -305,11 +354,11 @@
         }catch{}
       }
     }
-    renderFileList(); // re-render with thumbs
+    renderFileList();
   }
 
   // ═══════════════════════════════════════════════
-  //  SORTING (P1 #5)
+  //  SORTING
   // ═══════════════════════════════════════════════
   function sortFiles() {
     const dir = state.sortDir==='asc'?1:-1;
@@ -328,7 +377,7 @@
   }
 
   // ═══════════════════════════════════════════════
-  //  FILE LIST RENDERING (P1 #6: Virtual Scroll)
+  //  FILE LIST RENDERING (Virtual Scroll)
   // ═══════════════════════════════════════════════
   const ROW_H = 34;
   const BUFFER = 10;
@@ -371,7 +420,7 @@
         ? `<img class="file-thumb" src="${f.thumbUrl}" alt="" loading="lazy">`
         : `<span class="file-icon">${getFileIcon(ext)}</span>`;
       const pathHtml = f.relPath ? `<span class="file-path">${escHtml(f.relPath)}/</span>` : '';
-      html+=`<div class="file-item ${f.selected?'selected':''}" data-index="${idx}"><input type="checkbox" class="file-checkbox" ${f.selected?'checked':''}>${iconHtml}${pathHtml}<span class="file-name" title="${escAttr(f.name)}">${escHtml(f.name)}</span><span class="file-size">${formatSize(f.size)}</span></div>`;
+      html+=`<div class="file-item ${f.selected?'selected':''}" data-index="${idx}" data-vis="${i}"><input type="checkbox" class="file-checkbox" ${f.selected?'checked':''}>${iconHtml}${pathHtml}<span class="file-name" title="${escAttr(f.name)}">${escHtml(f.name)}</span><span class="file-size">${formatSize(f.size)}</span></div>`;
     }
     html+=`<div style="height:${bottomPad}px"></div>`;
     dom.fileList.innerHTML=html;
@@ -410,13 +459,13 @@
   }
   function removeRule(id){state.rules=state.rules.filter(r=>r.id!==id);renderRules();updatePreview()}
   function toggleRule(id){const r=state.rules.find(x=>x.id===id);if(r)r.enabled=!r.enabled;renderRules();updatePreview()}
-  function cloneRule(id){ // P1 #8
+  function cloneRule(id){
     const src=state.rules.find(x=>x.id===id);if(!src)return;
     const idx=state.rules.indexOf(src);
     const clone={id:uid(),type:src.type,params:{...src.params},enabled:src.enabled,collapsed:false};
     state.rules.splice(idx+1,0,clone);renderRules();updatePreview();
   }
-  function toggleCollapseRule(id){ // P2 #16
+  function toggleCollapseRule(id){
     const r=state.rules.find(x=>x.id===id);if(r)r.collapsed=!r.collapsed;renderRules();
   }
   function moveRule(id,dir){
@@ -427,10 +476,12 @@
   }
   function clearRules(){state.rules=[];state.customEdits={};renderRules();updatePreview()}
   function updateRuleParam(id,key,value){
-    const r=state.rules.find(x=>x.id===id);if(r){r.params[key]=value;updatePreview()}
+    const r=state.rules.find(x=>x.id===id);if(r){r.params[key]=value;debouncedPreview()}
   }
 
-  // Apply single rule
+  // v3 #5: Debounced preview update
+  const debouncedPreview = debounce(()=>updatePreview(), 150);
+
   function applyRule(rule,filename,index,file){
     if(!rule.enabled)return filename;
     const{base,ext}=splitFilename(filename);const p=rule.params;
@@ -481,13 +532,12 @@
   }
 
   function computeNewName(file,index){
-    // Check custom edit first (P2 #15)
     if(state.customEdits[file.name])return state.customEdits[file.name];
     let n=file.name;for(const r of state.rules)n=applyRule(r,n,index,file);return n;
   }
 
   // ═══════════════════════════════════════════════
-  //  RULES RENDERING (with clone, collapse, regex validation)
+  //  RULES RENDERING (v3 #10: i18n labels)
   // ═══════════════════════════════════════════════
   function ruleConfigHTML(rule){
     const p=rule.params,id=rule.id;
@@ -497,28 +547,29 @@
 
     switch(rule.type){
       case 'replace':{
-        const regexStatus = p.useRegex ? (() => {
-          try { new RegExp(p.find); return `<span class="regex-status valid">${t('regexValid')}</span>`; }
-          catch { return `<span class="regex-status invalid">${t('regexInvalid')}</span>`; }
+        const regexStatus = p.useRegex ? (()=>{
+          try{new RegExp(p.find);return`<span class="regex-status valid">${t('regexValid')}</span>`}
+          catch{return`<span class="regex-status invalid">${t('regexInvalid')}</span>`}
         })() : '';
+        const cls=p.useRegex?(()=>{try{new RegExp(p.find);return'regex-valid'}catch{return'regex-invalid'}})():'';
         return `
-          <div class="rule-field"><label>查找</label><input type="text" value="${escAttr(p.find)}" data-rule="${id}" data-key="find" placeholder="输入要查找的文本" class="${p.useRegex?(()=>{try{new RegExp(p.find);return'regex-valid'}catch{return'regex-invalid'}})():''}">${regexStatus}</div>
-          ${field('替换为','text','replace','替换后的文本')}
-          <div class="rule-field-inline">${chk('正则表达式','useRegex')} ${chk('区分大小写','caseSensitive')}</div>`;
+          <div class="rule-field"><label>${t('rFind')}</label><input type="text" value="${escAttr(p.find)}" data-rule="${id}" data-key="find" placeholder="${t('rInputFind')}" class="${cls}">${regexStatus}</div>
+          ${field(t('rReplaceWith'),'text','replace',t('rInputReplace'))}
+          <div class="rule-field-inline">${chk(t('rRegex'),'useRegex')} ${chk(t('rCaseSensitive'),'caseSensitive')}</div>`;
       }
-      case 'prefix': return field('前缀文本','text','text','如：photo_');
-      case 'suffix': return field('后缀文本','text','text','如：_final');
+      case 'prefix': return field(t('rPrefixText'),'text','text',t('rPhPrefix'));
+      case 'suffix': return field(t('rSuffixText'),'text','text',t('rPhSuffix'));
       case 'numbering': return `
-        ${field('起始值','number','start','','min="0"')}${field('步长','number','step','','min="1"')}${field('位数','number','digits','','min="1" max="10"')}
-        ${sel('位置','position',[['prefix','前缀'],['suffix','后缀']])}${field('分隔符','text','separator','_')}`;
-      case 'case': return sel('模式','mode',[['lower','全小写 (abc)'],['upper','全大写 (ABC)'],['title','首字母大写 (Abc)'],['camel','驼峰 (abcDef)'],['snake','蛇形 (abc_def)']]);
-      case 'remove': return `${field('起始位','number','from','0','min="0"')}${field('删除数','number','count','0','min="0"')}<div class="rule-field-inline">${chk('删除空格','removeSpaces')} ${chk('删除特殊字符','removeSpecial')}</div>`;
-      case 'extension': return field('新扩展名','text','newExt','如：jpg');
+        ${field(t('rStartValue'),'number','start','','min="0"')}${field(t('rStep'),'number','step','','min="1"')}${field(t('rDigits'),'number','digits','','min="1" max="10"')}
+        ${sel(t('rPosition'),'position',[[`prefix`,t('rPosPrefix')],[`suffix`,t('rPosSuffix')]])}${field(t('rSeparator'),'text','separator','_')}`;
+      case 'case': return sel(t('rMode'),'mode',[['lower',t('rLower')],['upper',t('rUpper')],['title',t('rTitle')],['camel',t('rCamel')],['snake',t('rSnake')]]);
+      case 'remove': return `${field(t('rStartPos'),'number','from','0','min="0"')}${field(t('rDeleteCount'),'number','count','0','min="0"')}<div class="rule-field-inline">${chk(t('rRemoveSpaces'),'removeSpaces')} ${chk(t('rRemoveSpecial'),'removeSpecial')}</div>`;
+      case 'extension': return field(t('rNewExt'),'text','newExt',t('rPhExt'));
       case 'date': return `
-        ${sel('格式','format',[['YYYY-MM-DD','2024-01-15'],['YYYYMMDD','20240115'],['YYYY-MM-DD HHmm','2024-01-15 1430'],['DD-MM-YYYY','15-01-2024']])}
-        ${sel('位置','position',[['prefix','前缀'],['suffix','后缀']])}
-        ${sel('日期来源','source',[['current','当前日期'],['modified','文件修改日期']])}
-        ${field('分隔符','text','separator','_')}`;
+        ${sel(t('rFormat'),'format',[['YYYY-MM-DD','2024-01-15'],['YYYYMMDD','20240115'],['YYYY-MM-DD HHmm','2024-01-15 1430'],['DD-MM-YYYY','15-01-2024']])}
+        ${sel(t('rPosition'),'position',[['prefix',t('rPosPrefix')],['suffix',t('rPosSuffix')]])}
+        ${sel(t('rDateSource'),'source',[['current',t('rCurrentDate')],['modified',t('rModifiedDate')]])}
+        ${field(t('rSeparator'),'text','separator','_')}`;
       default:return '';
     }
   }
@@ -532,14 +583,14 @@
       dom.rulesList.innerHTML=state.rules.map((rule,i)=>`
         <div class="rule-card ${rule.enabled?'':'disabled'} ${rule.collapsed?'collapsed':''}" data-rule-id="${rule.id}" draggable="true" style="animation-delay:${i*30}ms">
           <div class="rule-card-header" data-collapse-id="${rule.id}">
-            <span class="drag-handle" title="拖拽排序">⠿</span>
+            <span class="drag-handle" title="⠿">⠿</span>
             <span class="rule-type-badge ${rule.type}">${t(RULE_LABELS[rule.type])}</span>
             <div class="rule-actions">
-              <button class="rule-action-btn" data-action="move-up" data-id="${rule.id}" title="上移">▲</button>
-              <button class="rule-action-btn" data-action="move-down" data-id="${rule.id}" title="下移">▼</button>
-              <button class="rule-action-btn" data-action="clone" data-id="${rule.id}" title="复制">⧉</button>
-              <button class="rule-action-btn toggle-${rule.enabled?'on':'off'}" data-action="toggle" data-id="${rule.id}" title="${rule.enabled?'禁用':'启用'}">${rule.enabled?'👁':'👁‍🗨'}</button>
-              <button class="rule-action-btn delete" data-action="delete" data-id="${rule.id}" title="删除">✕</button>
+              <button class="rule-action-btn" data-action="move-up" data-id="${rule.id}" title="▲">▲</button>
+              <button class="rule-action-btn" data-action="move-down" data-id="${rule.id}" title="▼">▼</button>
+              <button class="rule-action-btn" data-action="clone" data-id="${rule.id}" title="⧉">⧉</button>
+              <button class="rule-action-btn toggle-${rule.enabled?'on':'off'}" data-action="toggle" data-id="${rule.id}">${rule.enabled?'👁':'👁‍🗨'}</button>
+              <button class="rule-action-btn delete" data-action="delete" data-id="${rule.id}">✕</button>
             </div>
           </div>
           <div class="rule-card-body">${ruleConfigHTML(rule)}</div>
@@ -552,7 +603,6 @@
   }
 
   function bindRuleEvents(){
-    // Actions
     dom.rulesList.querySelectorAll('.rule-action-btn').forEach(btn=>{
       btn.onclick=e=>{e.stopPropagation();const id=+btn.dataset.id;const a=btn.dataset.action;
         if(a==='delete')removeRule(id);else if(a==='toggle')toggleRule(id);
@@ -560,14 +610,12 @@
         else if(a==='clone')cloneRule(id);
       };
     });
-    // Collapse on header click (P2 #16)
     dom.rulesList.querySelectorAll('[data-collapse-id]').forEach(hdr=>{
       hdr.addEventListener('click',e=>{
         if(e.target.closest('.rule-action-btn')||e.target.closest('.drag-handle'))return;
         toggleCollapseRule(+hdr.dataset.collapseId);
       });
     });
-    // Params
     dom.rulesList.querySelectorAll('[data-rule][data-key]').forEach(el=>{
       const ev=el.matches('select')?'change':el.matches('[data-bool]')?'change':'input';
       el.addEventListener(ev,()=>{
@@ -575,7 +623,6 @@
         let v;if(el.hasAttribute('data-bool'))v=el.checked;
         else if(el.hasAttribute('data-num'))v=parseInt(el.value)||0;else v=el.value;
         updateRuleParam(rid,key,v);
-        // Regex validation feedback (P2 #14)
         if(key==='find'||key==='useRegex'){
           const rule=state.rules.find(r=>r.id===rid);
           if(rule&&rule.params.useRegex){
@@ -587,7 +634,6 @@
         }
       });
     });
-    // Drag and drop reorder
     dom.rulesList.querySelectorAll('.rule-card').forEach(card=>{
       card.addEventListener('dragstart',e=>{card.classList.add('dragging');e.dataTransfer.setData('text/plain',card.dataset.ruleId);e.dataTransfer.effectAllowed='move'});
       card.addEventListener('dragend',()=>{card.classList.remove('dragging');dom.rulesList.querySelectorAll('.rule-card').forEach(c=>c.classList.remove('drag-over'))});
@@ -605,19 +651,20 @@
   }
 
   // ═══════════════════════════════════════════════
-  //  PREVIEW (P0 #3: full conflict, P2 #15: editable)
+  //  PREVIEW (v3 #11: virtual scroll)
   // ═══════════════════════════════════════════════
+  const PREVIEW_ROW_H = 32;
   let _previewResults = [];
+  let _displayResults = [];
 
   function updatePreview(){
     const sel=state.files.filter(f=>f.selected);
     if(sel.length===0||state.rules.length===0){
       dom.previewBody.innerHTML='';dom.previewEmpty.classList.remove('hidden');
       dom.changeCount.textContent='0';dom.conflictCount.textContent='0';dom.unchangedCount.textContent='0';
-      dom.executeBtn.disabled=true;dom.actionInfo.textContent='';_previewResults=[];return;
+      dom.executeBtn.disabled=true;dom.actionInfo.textContent='';_previewResults=[];_displayResults=[];return;
     }
     const results=sel.map((file,i)=>({file,original:file.name,newName:computeNewName(file,i),isCustom:!!state.customEdits[file.name]}));
-    // Conflict detection: among results AND against unselected existing files (P0 #3)
     const unselectedNames=new Set(state.files.filter(f=>!f.selected).map(f=>f.name.toLowerCase()));
     const nameCounts={};
     results.forEach(r=>{const k=r.newName.toLowerCase();nameCounts[k]=(nameCounts[k]||0)+1});
@@ -629,39 +676,59 @@
     const conflicts=results.filter(r=>r.conflict).length;
     dom.changeCount.textContent=changes;dom.conflictCount.textContent=conflicts;
     dom.unchangedCount.textContent=results.filter(r=>!r.changed).length;
-    let display=state.showChangedOnly?results.filter(r=>r.changed):results;
-    dom.previewEmpty.classList.add('hidden');
     _previewResults=results;
-    if(display.length===0){
+    _displayResults=state.showChangedOnly?results.filter(r=>r.changed):results;
+    dom.previewEmpty.classList.toggle('hidden',_displayResults.length>0);
+    if(_displayResults.length===0){
       dom.previewBody.innerHTML=`<tr><td colspan="4" style="text-align:center;padding:30px;color:var(--text-muted)">${t('noChanges')}</td></tr>`;
     } else {
-      dom.previewBody.innerHTML=display.map(r=>{
-        const cls=r.conflict?'conflict':r.changed?(r.isCustom?'changed custom-edit':'changed'):'';
-        const ico=r.conflict?'<span class="conflict-icon" title="冲突">⚠️</span>':r.changed?'<span style="color:var(--accent-2)">●</span>':'<span style="color:var(--text-muted)">○</span>';
-        const newHtml=r.changed?highlightDiff(r.original,r.newName):escHtml(r.newName);
-        const customBadge=r.isCustom?`<span class="custom-badge">${t('customEdit')}</span>`:'';
-        return `<tr class="${cls}"><td class="col-status">${ico}</td><td class="original-name">${escHtml(r.original)}</td><td class="col-arrow">→</td><td class="new-name"><span class="new-name-editable" data-original="${escAttr(r.original)}" title="${t('clickToEdit')}">${newHtml}</span>${customBadge}</td></tr>`;
-      }).join('');
-      // Bind editable preview (P2 #15)
-      dom.previewBody.querySelectorAll('.new-name-editable').forEach(el=>{
-        el.addEventListener('dblclick',()=>{
-          const orig=el.dataset.original;
-          const current=state.customEdits[orig]||computeNewName(state.files.find(f=>f.name===orig),0);
-          el.textContent=current;el.contentEditable='true';el.classList.add('editing');el.focus();
-          const done=()=>{
-            el.contentEditable='false';el.classList.remove('editing');
-            const val=el.textContent.trim();
-            if(val&&val!==computeNewName(state.files.find(f=>f.name===orig),0)){state.customEdits[orig]=val}
-            else{delete state.customEdits[orig]}
-            updatePreview();
-          };
-          el.addEventListener('blur',done,{once:true});
-          el.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();el.blur()}if(e.key==='Escape'){delete state.customEdits[orig];el.blur()}},{once:true});
-        });
-      });
+      renderPreviewVirtualRows();
     }
     dom.executeBtn.disabled=changes===0||conflicts>0;
     dom.actionInfo.textContent=conflicts>0?t('hasConflict'):changes>0?t('willRename',changes):'';
+  }
+
+  function renderPreviewVirtualRows(){
+    const ct=dom.previewContainer;
+    const scrollTop=ct.scrollTop;
+    const viewH=ct.clientHeight;
+    const total=_displayResults.length;
+    const start=Math.max(0,Math.floor(scrollTop/PREVIEW_ROW_H)-BUFFER);
+    const end=Math.min(total,Math.ceil((scrollTop+viewH)/PREVIEW_ROW_H)+BUFFER);
+    const topPad=start*PREVIEW_ROW_H;
+    const bottomPad=(total-end)*PREVIEW_ROW_H;
+
+    let html=topPad>0?`<tr class="spacer-row"><td colspan="4" style="height:${topPad}px"></td></tr>`:'';
+    for(let i=start;i<end;i++){
+      const r=_displayResults[i];
+      const cls=r.conflict?'conflict':r.changed?(r.isCustom?'changed custom-edit':'changed'):'';
+      const ico=r.conflict?'<span class="conflict-icon">⚠️</span>':r.changed?'<span style="color:var(--accent-2)">●</span>':'<span style="color:var(--text-muted)">○</span>';
+      const newHtml=r.changed?highlightDiff(r.original,r.newName):escHtml(r.newName);
+      const customBadge=r.isCustom?`<span class="custom-badge">${t('customEdit')}</span>`:'';
+      html+=`<tr class="${cls}"><td class="col-status">${ico}</td><td class="original-name">${escHtml(r.original)}</td><td class="col-arrow">→</td><td class="new-name"><span class="new-name-editable" data-original="${escAttr(r.original)}" title="${t('clickToEdit')}">${newHtml}</span>${customBadge}</td></tr>`;
+    }
+    if(bottomPad>0)html+=`<tr class="spacer-row"><td colspan="4" style="height:${bottomPad}px"></td></tr>`;
+    dom.previewBody.innerHTML=html;
+    bindPreviewEditable();
+  }
+
+  function bindPreviewEditable(){
+    dom.previewBody.querySelectorAll('.new-name-editable').forEach(el=>{
+      el.addEventListener('dblclick',()=>{
+        const orig=el.dataset.original;
+        const current=state.customEdits[orig]||computeNewName(state.files.find(f=>f.name===orig),0);
+        el.textContent=current;el.contentEditable='true';el.classList.add('editing');el.focus();
+        const done=()=>{
+          el.contentEditable='false';el.classList.remove('editing');
+          const val=el.textContent.trim();
+          if(val&&val!==computeNewName(state.files.find(f=>f.name===orig),0)){state.customEdits[orig]=val}
+          else{delete state.customEdits[orig]}
+          updatePreview();
+        };
+        el.addEventListener('blur',done,{once:true});
+        el.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();el.blur()}if(e.key==='Escape'){delete state.customEdits[orig];el.blur()}},{once:true});
+      });
+    });
   }
 
   function highlightDiff(o,n){
@@ -674,7 +741,7 @@
   }
 
   // ═══════════════════════════════════════════════
-  //  EXECUTE & UNDO (P0 #2: safe ordering, P1 #9: progress)
+  //  EXECUTE & UNDO
   // ═══════════════════════════════════════════════
   async function executeRename(){
     const sel=state.files.filter(f=>f.selected);
@@ -682,17 +749,13 @@
     if(!results.length)return;
     if(!await showConfirm(t('confirmTitle'),t('confirmRename',results.length)))return;
 
-    // Show progress (P1 #9)
     dom.progressOverlay.classList.remove('hidden');
     dom.progressBar.style.width='0%';dom.progressCount.textContent=`0 / ${results.length}`;
     dom.progressErrors.classList.add('hidden');
 
-    // P0 #2: Safe rename ordering — detect name clashes, use temp names
     const existingNames=new Set(state.files.map(f=>f.name.toLowerCase()));
-    const newNamesSet=new Set(results.map(r=>r.newName.toLowerCase()));
     const needsTemp=[];const direct=[];
     for(const r of results){
-      // If the target name is currently an existing file (and it's not this file being renamed away)
       const targetExists=existingNames.has(r.newName.toLowerCase()) && r.newName.toLowerCase()!==r.original.toLowerCase();
       const targetIsBeingRenamed=results.some(x=>x.original.toLowerCase()===r.newName.toLowerCase());
       if(targetExists && targetIsBeingRenamed){needsTemp.push(r)} else {direct.push(r)}
@@ -706,33 +769,25 @@
       if(errors>0){dom.progressErrors.classList.remove('hidden');dom.progressErrors.textContent=t('nFailed',errors)}
     };
 
-    // Phase 1: rename conflicting files to temp names
-    const tempMap=new Map(); // handle -> tempName
     for(const r of needsTemp){
       const tempName=`__brp_temp_${Date.now()}_${Math.random().toString(36).slice(2)}_${r.original}`;
-      try{await r.file.handle.move(tempName);tempMap.set(r.file.handle,tempName);r.file.name=tempName}catch(e){console.error(e);errors++}
+      try{await r.file.handle.move(tempName);r.file.name=tempName}catch(e){console.error(e);errors++}
     }
-    // Phase 2: rename direct files
     for(const r of direct){
       try{await r.file.handle.move(r.newName);r.file.name=r.newName;undoEntries.push({handle:r.file.handle,oldName:r.original,newName:r.newName});updateProgress()}catch(e){console.error(e);errors++;updateProgress()}
     }
-    // Phase 3: rename temp files to final names
     for(const r of needsTemp){
       try{await r.file.handle.move(r.newName);r.file.name=r.newName;undoEntries.push({handle:r.file.handle,oldName:r.original,newName:r.newName});updateProgress()}catch(e){console.error(e);errors++;updateProgress()}
     }
 
-    // Hide progress
     setTimeout(()=>dom.progressOverlay.classList.add('hidden'),400);
 
     if(undoEntries.length>0){
-      const logEntry={timestamp:Date.now(),entries:undoEntries.map(e=>({old:e.oldName,new:e.newName}))};
       state.undoStack.push({entries:undoEntries,timestamp:Date.now()});
-      state.operationLogs.push(logEntry);
+      state.operationLogs.push({timestamp:Date.now(),entries:undoEntries.map(e=>({old:e.oldName,new:e.newName}))});
       dom.undoBtn.disabled=false;dom.exportLogBtn.disabled=false;
     }
-    state.customEdits={};
-    state.allFileNames=state.files.map(f=>f.name);
-
+    state.customEdits={};state.allFileNames=state.files.map(f=>f.name);
     if(errors===0)toast(t('successRename',undoEntries.length),'success');
     else toast(t('partialRename',undoEntries.length,errors),'warning');
     renderFileList();updatePreview();
@@ -752,7 +807,7 @@
   }
 
   // ═══════════════════════════════════════════════
-  //  EXPORT LOG (P1 #10)
+  //  EXPORT LOG
   // ═══════════════════════════════════════════════
   function exportLog(){
     if(!state.operationLogs.length){toast('No operations to export','info');return}
@@ -764,12 +819,11 @@
     const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);
     a.download=`batch-rename-log-${new Date().toISOString().slice(0,10)}.csv`;a.click();
-    URL.revokeObjectURL(a.href);
-    toast('Log exported','success');
+    URL.revokeObjectURL(a.href);toast('Log exported','success');
   }
 
   // ═══════════════════════════════════════════════
-  //  PRESETS (P1 #4)
+  //  PRESETS
   // ═══════════════════════════════════════════════
   const BUILTIN_PRESETS={
     __photo:[{type:'date',params:{format:'YYYY-MM-DD',position:'prefix',source:'modified',separator:'_'}},{type:'numbering',params:{start:1,step:1,digits:3,position:'suffix',separator:'_'}}],
@@ -779,12 +833,10 @@
 
   function loadPresets(){
     const saved=JSON.parse(localStorage.getItem('brp_presets')||'{}');
-    const optgroup=dom.presetSelect.querySelector('optgroup[data-i18n-optgroup="builtinPresets"]');
-    // Remove old custom optgroup if exists
     const oldCustom=dom.presetSelect.querySelector('optgroup.custom-presets');
     if(oldCustom)oldCustom.remove();
     if(Object.keys(saved).length>0){
-      const grp=document.createElement('optgroup');grp.label='自定义预设';grp.className='custom-presets';
+      const grp=document.createElement('optgroup');grp.label=t('lang')==='en'?'Custom Presets':'自定义预设';grp.className='custom-presets';
       for(const name of Object.keys(saved)){
         const opt=document.createElement('option');opt.value='custom:'+name;opt.textContent='⭐ '+name;
         grp.appendChild(opt);
@@ -820,7 +872,7 @@
   }
 
   // ═══════════════════════════════════════════════
-  //  THEME & LANG (P2 #11, #12)
+  //  THEME & LANG
   // ═══════════════════════════════════════════════
   function setTheme(theme){
     state.theme=theme;document.documentElement.dataset.theme=theme;
@@ -830,21 +882,18 @@
   function setLang(lang){
     state.lang=lang;localStorage.setItem('brp_lang',lang);
     dom.langToggle.textContent=lang==='zh'?'中/En':'En/中';
-    // Update all data-i18n elements
     document.querySelectorAll('[data-i18n]').forEach(el=>{
       const key=el.dataset.i18n;const text=t(key);
       if(el.querySelector('.panel-badge')){
-        // Preserve badge
         const badge=el.querySelector('.panel-badge');
         el.textContent=text+' ';el.appendChild(badge);
       }else{el.textContent=text}
     });
-    // Re-render dynamic content
     renderFileList();renderRules();updatePreview();
   }
 
   // ═══════════════════════════════════════════════
-  //  DRAG & DROP (P1 #7)
+  //  DRAG & DROP
   // ═══════════════════════════════════════════════
   function setupDragDrop(){
     const panel=document.querySelector('.file-panel');
@@ -875,11 +924,87 @@
   }
 
   // ═══════════════════════════════════════════════
-  //  KEYBOARD SHORTCUTS (P2 #13)
+  //  CONTEXT MENU (v3 #9)
+  // ═══════════════════════════════════════════════
+  function showContextMenu(e, file){
+    e.preventDefault();
+    state.contextFile=file;
+    const menu=dom.contextMenu;
+    menu.classList.remove('hidden');
+    // Position, clamped to viewport
+    const x=Math.min(e.clientX,window.innerWidth-220);
+    const y=Math.min(e.clientY,window.innerHeight-menu.offsetHeight-10);
+    menu.style.left=x+'px';menu.style.top=y+'px';
+  }
+  function hideContextMenu(){dom.contextMenu.classList.add('hidden');state.contextFile=null}
+
+  function handleContextAction(action){
+    const f=state.contextFile;if(!f){hideContextMenu();return}
+    switch(action){
+      case 'select-only':
+        state.files.forEach(x=>x.selected=x===f);
+        renderFileList();updatePreview();break;
+      case 'deselect':
+        f.selected=false;renderFileList();updatePreview();break;
+      case 'copy-name':
+        navigator.clipboard.writeText(f.name).then(()=>toast(t('copied'),'success'));break;
+      case 'locate-preview':
+        // Switch to preview tab on mobile, scroll to item
+        if(window.innerWidth<1024)switchTab('preview');
+        const idx=_previewResults.findIndex(r=>r.original===f.name);
+        if(idx>=0){dom.previewContainer.scrollTop=idx*PREVIEW_ROW_H;renderPreviewVirtualRows()}
+        break;
+      case 'file-info':
+        showFileInfo(f);break;
+    }
+    hideContextMenu();
+  }
+
+  function showFileInfo(f){
+    const {ext}=splitFilename(f.name);
+    const modified=new Date(f.lastModified).toLocaleString();
+    dom.fileInfoBody.innerHTML=`<table class="file-info-table">
+      <tr><td>${t('fiName')}</td><td>${escHtml(f.name)}</td></tr>
+      <tr><td>${t('fiSize')}</td><td>${formatSize(f.size)}</td></tr>
+      <tr><td>${t('fiType')}</td><td>${ext?'.'+ext.toUpperCase():'-'}</td></tr>
+      <tr><td>${t('fiModified')}</td><td>${modified}</td></tr>
+      ${f.relPath?`<tr><td>${t('fiPath')}</td><td>${escHtml(f.relPath)}</td></tr>`:''}
+    </table>`;
+    dom.fileInfoModal.classList.add('open');
+  }
+
+  // ═══════════════════════════════════════════════
+  //  RESPONSIVE TABS (v3 #8)
+  // ═══════════════════════════════════════════════
+  function switchTab(tab){
+    state.activeTab=tab;
+    dom.mobileTabs.querySelectorAll('.mobile-tab').forEach(t=>{
+      t.classList.toggle('active',t.dataset.panel===tab);
+    });
+    document.querySelectorAll('.file-panel,.rules-panel,.preview-panel').forEach(p=>{
+      p.classList.remove('tab-active');
+    });
+    const panelMap={file:'.file-panel',rules:'.rules-panel',preview:'.preview-panel'};
+    document.querySelector(panelMap[tab])?.classList.add('tab-active');
+  }
+
+  function checkResponsive(){
+    if(window.innerWidth<1024){
+      switchTab(state.activeTab);
+    } else {
+      // Desktop: show all panels, remove tab-active classes
+      document.querySelectorAll('.file-panel,.rules-panel,.preview-panel').forEach(p=>{
+        p.classList.remove('tab-active');
+        p.style.display='';
+      });
+    }
+  }
+
+  // ═══════════════════════════════════════════════
+  //  KEYBOARD SHORTCUTS
   // ═══════════════════════════════════════════════
   function setupShortcuts(){
     document.addEventListener('keydown',e=>{
-      // Ignore if focused in input
       if(e.target.matches('input,select,[contenteditable="true"]')&&e.key!=='Escape')return;
       if(e.key==='Escape'){closeAllModals();return}
       if(e.ctrlKey&&e.key==='o'){e.preventDefault();selectFolder()}
@@ -902,28 +1027,69 @@
   //  INIT
   // ═══════════════════════════════════════════════
   function init(){
-    // Check API
     if(!('showDirectoryPicker' in window)){toast(t('noFSAPI'),'error');dom.selectFolderBtn.disabled=true;return}
-    // PWA
     if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{})}
-    // Restore preferences
     const savedTheme=localStorage.getItem('brp_theme')||'dark';setTheme(savedTheme);
     const savedLang=localStorage.getItem('brp_lang')||'zh';setLang(savedLang);
     loadPresets();
 
     // File panel
     dom.selectFolderBtn.addEventListener('click',selectFolder);
-    dom.fileSearch.addEventListener('input',e=>{state.searchTerm=e.target.value;renderFileList()});
+    // v3 #5: Debounced search
+    const debouncedSearch=debounce(v=>{state.searchTerm=v;renderFileList()},150);
+    dom.fileSearch.addEventListener('input',e=>debouncedSearch(e.target.value));
     dom.extFilter.addEventListener('change',e=>{state.extFilter=e.target.value;renderFileList()});
     dom.selectAllCb.addEventListener('change',e=>{getVisibleFiles().forEach(f=>f.selected=e.target.checked);renderFileList();updatePreview()});
+
+    // v3 #7: Shift+Click range select
     dom.fileList.addEventListener('click',e=>{
       const item=e.target.closest('.file-item');if(!item)return;
       const f=state.files[+item.dataset.index];if(!f)return;
-      if(e.target.matches('.file-checkbox'))f.selected=e.target.checked;else f.selected=!f.selected;
+      const visIdx=+item.dataset.vis;
+
+      if(e.target.matches('.file-checkbox')){
+        f.selected=e.target.checked;
+        state.lastClickedVisIdx=visIdx;
+      } else if(e.shiftKey && state.lastClickedVisIdx!==null){
+        // Range select
+        const start=Math.min(state.lastClickedVisIdx,visIdx);
+        const end=Math.max(state.lastClickedVisIdx,visIdx);
+        for(let i=start;i<=end;i++){
+          if(_visibleFiles[i])_visibleFiles[i].selected=true;
+        }
+      } else {
+        f.selected=!f.selected;
+        state.lastClickedVisIdx=visIdx;
+      }
       renderFileList();updatePreview();
     });
+
+    // v3 #9: Context menu
+    dom.fileList.addEventListener('contextmenu',e=>{
+      const item=e.target.closest('.file-item');if(!item)return;
+      const f=state.files[+item.dataset.index];if(!f)return;
+      showContextMenu(e,f);
+    });
+    dom.contextMenu.addEventListener('click',e=>{
+      const item=e.target.closest('.ctx-item');if(!item)return;
+      handleContextAction(item.dataset.action);
+    });
+    document.addEventListener('click',e=>{
+      if(!dom.contextMenu.contains(e.target))hideContextMenu();
+    });
+    document.addEventListener('contextmenu',e=>{
+      if(!e.target.closest('.file-item')&&!dom.contextMenu.contains(e.target))hideContextMenu();
+    });
+
+    // File info modal
+    dom.fileInfoCloseBtn.addEventListener('click',()=>dom.fileInfoModal.classList.remove('open'));
+    dom.fileInfoModal.addEventListener('click',e=>{if(e.target===dom.fileInfoModal)dom.fileInfoModal.classList.remove('open')});
+
     // Virtual scroll
     dom.fileListContainer.addEventListener('scroll',()=>{if(_visibleFiles.length)renderVirtualRows()});
+    // v3 #11: Preview virtual scroll
+    dom.previewContainer.addEventListener('scroll',()=>{if(_displayResults.length)renderPreviewVirtualRows()});
+
     // Sort
     dom.sortBy.addEventListener('change',e=>{state.sortBy=e.target.value;sortFiles();renderFileList();updatePreview()});
     dom.sortDirBtn.addEventListener('click',()=>{state.sortDir=state.sortDir==='asc'?'desc':'asc';dom.sortDirBtn.textContent=state.sortDir==='asc'?'↑':'↓';sortFiles();renderFileList();updatePreview()});
@@ -960,6 +1126,13 @@
     dom.shortcutsCloseBtn.addEventListener('click',()=>dom.shortcutsModal.classList.remove('open'));
     // Drag drop & Shortcuts
     setupDragDrop();setupShortcuts();
+
+    // v3 #8: Mobile tabs
+    dom.mobileTabs.querySelectorAll('.mobile-tab').forEach(tab=>{
+      tab.addEventListener('click',()=>switchTab(tab.dataset.panel));
+    });
+    checkResponsive();
+    window.addEventListener('resize',debounce(checkResponsive,200));
   }
 
   init();

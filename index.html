@@ -30,6 +30,13 @@
     </header>
 
     <!-- ===== Main Body ===== -->
+    <!-- Mobile Tab Bar -->
+    <nav class="mobile-tabs" id="mobileTabs">
+      <button class="mobile-tab active" data-panel="file">📁 <span data-i18n="tabFile">文件</span></button>
+      <button class="mobile-tab" data-panel="rules">⚙️ <span data-i18n="tabRules">规则</span></button>
+      <button class="mobile-tab" data-panel="preview">👁 <span data-i18n="tabPreview">预览</span></button>
+    </nav>
+
     <div class="app-body">
 
       <!-- ── File Panel ── -->
@@ -271,6 +278,28 @@
       <div class="progress-detail">
         <span id="progressCount">0 / 0</span>
         <span id="progressErrors" class="progress-errors hidden">0 失败</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Context Menu -->
+  <div id="contextMenu" class="context-menu hidden">
+    <div class="ctx-item" data-action="select-only">📌 <span data-i18n="ctxSelectOnly">仅选择此文件</span></div>
+    <div class="ctx-item" data-action="deselect">❌ <span data-i18n="ctxDeselect">取消选择</span></div>
+    <div class="ctx-divider"></div>
+    <div class="ctx-item" data-action="copy-name">📋 <span data-i18n="ctxCopyName">复制文件名</span></div>
+    <div class="ctx-item" data-action="locate-preview">🔍 <span data-i18n="ctxLocatePreview">在预览中定位</span></div>
+    <div class="ctx-divider"></div>
+    <div class="ctx-item" data-action="file-info">ℹ️ <span data-i18n="ctxFileInfo">文件信息</span></div>
+  </div>
+
+  <!-- File Info Modal -->
+  <div id="fileInfoModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header" data-i18n="fileInfoTitle">文件信息</div>
+      <div class="modal-body" id="fileInfoBody"></div>
+      <div class="modal-footer">
+        <button id="fileInfoCloseBtn" class="btn btn-secondary" data-i18n="close">关闭</button>
       </div>
     </div>
   </div>
