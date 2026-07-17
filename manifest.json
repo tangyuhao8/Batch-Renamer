@@ -1,0 +1,16 @@
+{
+  "name": "Batch Renamer Pro",
+  "short_name": "BatchRenamer",
+  "description": "强大的本地批量文件重命名工具",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#07080f",
+  "theme_color": "#6c5ce7",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>📁</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

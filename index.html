@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Batch Renamer Pro — 批量重命名工具</title>
   <meta name="description" content="强大的本地批量文件重命名工具，支持多种规则叠加、实时预览和撤销。">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#6c5ce7">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,35 +18,51 @@
         <div class="header-logo">📁</div>
         <div>
           <div class="header-title">Batch Renamer Pro</div>
-          <div class="header-subtitle">批量文件重命名工具</div>
+          <div class="header-subtitle" data-i18n="subtitle">批量文件重命名工具</div>
         </div>
       </div>
       <div class="header-actions">
         <span id="currentPath" class="header-path hidden"></span>
+        <button id="shortcutsBtn" class="icon-btn" title="快捷键">⌨️</button>
+        <button id="themeToggle" class="icon-btn" title="切换主题">🌙</button>
+        <button id="langToggle" class="icon-btn" title="Switch Language">中/En</button>
       </div>
     </header>
 
     <!-- ===== Main Body ===== -->
     <div class="app-body">
 
-      <!-- File Panel -->
+      <!-- ── File Panel ── -->
       <section class="panel file-panel">
         <div class="panel-header">
-          <span class="panel-title">文件列表 <span id="fileBadge" class="panel-badge hidden">0</span></span>
+          <span class="panel-title" data-i18n="fileList">文件列表 <span id="fileBadge" class="panel-badge hidden">0</span></span>
+          <div class="sort-control">
+            <select id="sortBy" class="sort-select" title="排序方式">
+              <option value="name" data-i18n-opt="sortName">名称</option>
+              <option value="size" data-i18n-opt="sortSize">大小</option>
+              <option value="date" data-i18n-opt="sortDate">日期</option>
+              <option value="type" data-i18n-opt="sortType">类型</option>
+            </select>
+            <button id="sortDirBtn" class="icon-btn sort-dir-btn" title="排序方向">↑</button>
+          </div>
         </div>
         <div class="file-toolbar">
-          <button id="selectFolderBtn" class="folder-btn">📂 选择文件夹</button>
+          <button id="selectFolderBtn" class="folder-btn" data-i18n="selectFolder">📂 选择文件夹</button>
           <input type="search" id="fileSearch" class="search-input" placeholder="搜索文件名…" disabled>
           <select id="extFilter" class="filter-select" disabled>
-            <option value="">全部类型</option>
+            <option value="" data-i18n-opt="allTypes">全部类型</option>
           </select>
+          <label class="toolbar-toggle" title="包含子文件夹">
+            <input type="checkbox" id="recursiveToggle">
+            <span data-i18n="recursive">递归</span>
+          </label>
         </div>
-        <div class="file-list-container">
+        <div class="file-list-container" id="fileListContainer">
           <div id="fileList">
-            <div class="file-list-empty">
+            <div class="file-list-empty" id="fileListEmpty">
               <span class="empty-icon">📂</span>
-              <span class="empty-text">暂无文件</span>
-              <span class="empty-hint">点击上方按钮选择文件夹</span>
+              <span class="empty-text" data-i18n="noFiles">暂无文件</span>
+              <span class="empty-hint" data-i18n="selectFolderHint">点击上方按钮或拖放文件夹到此处</span>
             </div>
           </div>
         </div>
@@ -55,122 +73,143 @@
           </div>
           <label class="select-all-label">
             <input type="checkbox" id="selectAllCheckbox" disabled>
-            全选
+            <span data-i18n="selectAll">全选</span>
           </label>
+        </div>
+        <!-- Drag-drop overlay -->
+        <div id="dropZone" class="drop-zone hidden">
+          <div class="drop-zone-content">
+            <span class="drop-zone-icon">📥</span>
+            <span class="drop-zone-text" data-i18n="dropHere">拖放文件夹到此处</span>
+          </div>
         </div>
       </section>
 
-      <!-- Rules Panel -->
+      <!-- ── Rules Panel ── -->
       <section class="panel rules-panel">
         <div class="panel-header">
-          <span class="panel-title">重命名规则 <span id="ruleBadge" class="panel-badge hidden">0</span></span>
+          <span class="panel-title" data-i18n="renameRules">重命名规则 <span id="ruleBadge" class="panel-badge hidden">0</span></span>
+          <div class="preset-control">
+            <select id="presetSelect" class="preset-select">
+              <option value="" data-i18n-opt="selectPreset">选择预设…</option>
+              <optgroup label="内置预设" data-i18n-optgroup="builtinPresets">
+                <option value="__photo">📷 照片整理</option>
+                <option value="__code">💻 代码规范</option>
+                <option value="__clean">🧹 批量清理</option>
+              </optgroup>
+            </select>
+            <button id="savePresetBtn" class="icon-btn" title="保存当前规则为预设" data-i18n-title="savePreset">💾</button>
+          </div>
         </div>
         <div class="rules-toolbar">
           <div class="add-rule-btn">
-            <button id="addRuleTrigger" class="add-rule-trigger">＋ 添加规则</button>
+            <button id="addRuleTrigger" class="add-rule-trigger" data-i18n="addRule">＋ 添加规则</button>
             <div id="ruleTypeMenu" class="rule-type-menu">
               <div class="rule-type-option" data-type="replace">
                 <span class="option-icon">🔄</span>
-                <span class="option-label">查找替换</span>
-                <span class="option-desc">文本 / 正则</span>
+                <span class="option-label" data-i18n="ruleReplace">查找替换</span>
+                <span class="option-desc" data-i18n="ruleReplaceDesc">文本 / 正则</span>
               </div>
               <div class="rule-type-option" data-type="prefix">
                 <span class="option-icon">➡️</span>
-                <span class="option-label">添加前缀</span>
-                <span class="option-desc">文件名前</span>
+                <span class="option-label" data-i18n="rulePrefix">添加前缀</span>
+                <span class="option-desc" data-i18n="rulePrefixDesc">文件名前</span>
               </div>
               <div class="rule-type-option" data-type="suffix">
                 <span class="option-icon">⬅️</span>
-                <span class="option-label">添加后缀</span>
-                <span class="option-desc">文件名后</span>
+                <span class="option-label" data-i18n="ruleSuffix">添加后缀</span>
+                <span class="option-desc" data-i18n="ruleSuffixDesc">文件名后</span>
               </div>
               <div class="rule-type-option" data-type="numbering">
                 <span class="option-icon">🔢</span>
-                <span class="option-label">序号编号</span>
-                <span class="option-desc">递增编号</span>
+                <span class="option-label" data-i18n="ruleNumbering">序号编号</span>
+                <span class="option-desc" data-i18n="ruleNumberingDesc">递增编号</span>
               </div>
               <div class="rule-type-option" data-type="case">
                 <span class="option-icon">🔤</span>
-                <span class="option-label">大小写转换</span>
-                <span class="option-desc">大/小/首字母</span>
+                <span class="option-label" data-i18n="ruleCase">大小写转换</span>
+                <span class="option-desc" data-i18n="ruleCaseDesc">大/小/首字母</span>
               </div>
               <div class="rule-type-option" data-type="remove">
                 <span class="option-icon">✂️</span>
-                <span class="option-label">删除字符</span>
-                <span class="option-desc">指定位置/类型</span>
+                <span class="option-label" data-i18n="ruleRemove">删除字符</span>
+                <span class="option-desc" data-i18n="ruleRemoveDesc">指定位置/类型</span>
               </div>
               <div class="rule-type-option" data-type="extension">
                 <span class="option-icon">📎</span>
-                <span class="option-label">修改扩展名</span>
-                <span class="option-desc">更改后缀</span>
+                <span class="option-label" data-i18n="ruleExtension">修改扩展名</span>
+                <span class="option-desc" data-i18n="ruleExtensionDesc">更改后缀</span>
               </div>
               <div class="rule-type-option" data-type="date">
                 <span class="option-icon">📅</span>
-                <span class="option-label">插入日期</span>
-                <span class="option-desc">当前 / 修改日期</span>
+                <span class="option-label" data-i18n="ruleDate">插入日期</span>
+                <span class="option-desc" data-i18n="ruleDateDesc">当前 / 修改日期</span>
               </div>
             </div>
           </div>
-          <button id="clearRulesBtn" class="clear-rules-btn hidden">清空规则</button>
+          <button id="collapseAllBtn" class="icon-btn hidden" title="折叠/展开全部">▬</button>
+          <button id="clearRulesBtn" class="clear-rules-btn hidden" data-i18n="clearRules">清空规则</button>
         </div>
         <div class="rules-list-container">
           <div id="rulesList">
             <div class="rules-empty">
               <span class="empty-icon">⚙️</span>
-              <span>添加规则以开始重命名</span>
+              <span data-i18n="addRuleHint">添加规则以开始重命名</span>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Preview Panel -->
+      <!-- ── Preview Panel ── -->
       <section class="panel preview-panel">
         <div class="panel-header">
-          <span class="panel-title">预览</span>
+          <span class="panel-title" data-i18n="preview">预览</span>
+          <div class="preview-header-actions">
+            <button id="exportLogBtn" class="icon-btn" title="导出操作日志" disabled>📋</button>
+          </div>
         </div>
         <div class="preview-toolbar">
           <div class="preview-stat">
             <span class="stat-dot changes"></span>
             <span class="stat-value" id="changeCount">0</span>
-            <span class="stat-label">个变更</span>
+            <span class="stat-label" data-i18n="changes">个变更</span>
           </div>
           <div class="preview-stat">
             <span class="stat-dot conflicts"></span>
             <span class="stat-value" id="conflictCount">0</span>
-            <span class="stat-label">个冲突</span>
+            <span class="stat-label" data-i18n="conflicts">个冲突</span>
           </div>
           <div class="preview-stat">
             <span class="stat-dot unchanged"></span>
             <span class="stat-value" id="unchangedCount">0</span>
-            <span class="stat-label">个不变</span>
+            <span class="stat-label" data-i18n="unchanged">个不变</span>
           </div>
           <label class="preview-filter-toggle">
             <input type="checkbox" id="showChangedOnly">
-            仅显示变更项
+            <span data-i18n="showChangedOnly">仅显示变更项</span>
           </label>
         </div>
-        <div class="preview-table-container">
+        <div class="preview-table-container" id="previewContainer">
           <table class="preview-table">
             <thead>
               <tr>
                 <th class="col-status"></th>
-                <th>原文件名</th>
+                <th data-i18n="originalName">原文件名</th>
                 <th class="col-arrow"></th>
-                <th>新文件名</th>
+                <th data-i18n="newName">新文件名</th>
               </tr>
             </thead>
-            <tbody id="previewBody">
-            </tbody>
+            <tbody id="previewBody"></tbody>
           </table>
           <div id="previewEmpty" class="preview-empty">
             <span class="empty-icon">👀</span>
-            <span>选择文件并添加规则后，预览将在此显示</span>
+            <span data-i18n="previewHint">选择文件并添加规则后，预览将在此显示</span>
           </div>
         </div>
         <div class="action-bar">
           <span class="action-info" id="actionInfo"></span>
-          <button id="undoBtn" class="btn btn-secondary" disabled>↩ 撤销上次操作</button>
-          <button id="executeBtn" class="btn btn-primary" disabled>✅ 执行重命名</button>
+          <button id="undoBtn" class="btn btn-secondary" disabled data-i18n="undo">↩ 撤销上次操作</button>
+          <button id="executeBtn" class="btn btn-primary" disabled data-i18n="execute">✅ 执行重命名</button>
         </div>
       </section>
 
@@ -183,8 +222,55 @@
       <div class="modal-header" id="modalTitle">确认操作</div>
       <div class="modal-body" id="modalBody">确定要执行此操作吗？</div>
       <div class="modal-footer">
-        <button id="modalCancelBtn" class="btn btn-secondary">取消</button>
-        <button id="modalConfirmBtn" class="btn btn-primary">确认</button>
+        <button id="modalCancelBtn" class="btn btn-secondary" data-i18n="cancel">取消</button>
+        <button id="modalConfirmBtn" class="btn btn-primary" data-i18n="confirm">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Prompt Modal (for preset save) -->
+  <div id="promptModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header" id="promptTitle">保存预设</div>
+      <div class="modal-body">
+        <input type="text" id="promptInput" class="prompt-input" placeholder="输入预设名称…">
+      </div>
+      <div class="modal-footer">
+        <button id="promptCancelBtn" class="btn btn-secondary">取消</button>
+        <button id="promptConfirmBtn" class="btn btn-primary">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shortcuts Modal -->
+  <div id="shortcutsModal" class="modal-overlay">
+    <div class="modal modal-wide">
+      <div class="modal-header" data-i18n="keyboardShortcuts">快捷键</div>
+      <div class="modal-body shortcuts-body">
+        <div class="shortcut-row"><kbd>Ctrl</kbd>+<kbd>O</kbd><span data-i18n="scOpen">选择文件夹</span></div>
+        <div class="shortcut-row"><kbd>Ctrl</kbd>+<kbd>Enter</kbd><span data-i18n="scExec">执行重命名</span></div>
+        <div class="shortcut-row"><kbd>Ctrl</kbd>+<kbd>Z</kbd><span data-i18n="scUndo">撤销</span></div>
+        <div class="shortcut-row"><kbd>Ctrl</kbd>+<kbd>A</kbd><span data-i18n="scSelectAll">全选</span></div>
+        <div class="shortcut-row"><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd><span data-i18n="scInvertSel">反选</span></div>
+        <div class="shortcut-row"><kbd>Ctrl</kbd>+<kbd>E</kbd><span data-i18n="scExport">导出日志</span></div>
+        <div class="shortcut-row"><kbd>Esc</kbd><span data-i18n="scClose">关闭弹窗</span></div>
+      </div>
+      <div class="modal-footer">
+        <button id="shortcutsCloseBtn" class="btn btn-secondary" data-i18n="close">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Overlay -->
+  <div id="progressOverlay" class="progress-overlay hidden">
+    <div class="progress-card">
+      <div class="progress-title" data-i18n="renaming">正在重命名…</div>
+      <div class="progress-bar-track">
+        <div id="progressBar" class="progress-bar-fill"></div>
+      </div>
+      <div class="progress-detail">
+        <span id="progressCount">0 / 0</span>
+        <span id="progressErrors" class="progress-errors hidden">0 失败</span>
       </div>
     </div>
   </div>
