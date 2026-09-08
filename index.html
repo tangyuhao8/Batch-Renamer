@@ -55,6 +55,7 @@
         </div>
         <div class="file-toolbar">
           <button id="selectFolderBtn" class="folder-btn" data-i18n="selectFolder">📂 选择文件夹</button>
+          <button id="selectFilesBtn" class="folder-btn folder-btn-secondary" data-i18n="selectFiles" title="选择个别文件">📄 选择文件</button>
           <input type="file" id="fallbackFolderInput" webkitdirectory directory multiple class="hidden">
           <input type="file" id="fallbackFilesInput" multiple class="hidden">
           <input type="search" id="fileSearch" class="search-input" placeholder="搜索文件名… (Ctrl+F)" disabled>
@@ -80,10 +81,13 @@
             <span id="fileCount">0 个文件</span>
             <span id="selectedCount">已选 0</span>
           </div>
-          <label class="select-all-label">
-            <input type="checkbox" id="selectAllCheckbox" disabled>
-            <span data-i18n="selectAll">全选</span>
-          </label>
+          <div class="file-select-actions">
+            <button id="invertSelectionBtn" class="link-btn" data-i18n="invertSelection" title="反选 (Ctrl+Shift+A)" disabled>反选</button>
+            <label class="select-all-label">
+              <input type="checkbox" id="selectAllCheckbox" disabled>
+              <span data-i18n="selectAll">全选</span>
+            </label>
+          </div>
         </div>
         <!-- Drag-drop overlay -->
         <div id="dropZone" class="drop-zone hidden">
@@ -102,11 +106,15 @@
             <select id="presetSelect" class="preset-select">
               <option value="" data-i18n-opt="selectPreset">选择预设…</option>
               <optgroup label="内置预设" data-i18n-optgroup="builtinPresets">
-                <option value="__photo">📷 照片整理 (日期+编号)</option>
-                <option value="__cleanMedia">🎬 影视清理 (去字幕组/分辨率标签)</option>
-                <option value="__code">💻 代码规范 (snake_case)</option>
-                <option value="__clean">🧹 批量清理 (去特殊字符/空格)</option>
-                <option value="__lowerExt">📎 扩展名全小写</option>
+                <option value="__photo" data-i18n-opt="presetPhoto">📷 照片整理 (日期+编号)</option>
+                <option value="__cleanMedia" data-i18n-opt="presetCleanMedia">🎬 影视清理 (去字幕组/分辨率标签)</option>
+                <option value="__normalizeSpaces" data-i18n-opt="presetNormalizeSpaces">🗜️ 整理空格 (去首尾/压缩)</option>
+                <option value="__webSafe" data-i18n-opt="presetWebSafe">🌐 Web安全命名 (kebab-case)</option>
+                <option value="__addDatePrefix" data-i18n-opt="presetAddDatePrefix">📅 添加日期前缀 (修改日期)</option>
+                <option value="__stripDigits" data-i18n-opt="presetStripDigits">🔢 去除全部数字</option>
+                <option value="__code" data-i18n-opt="presetCode">💻 代码规范 (snake_case)</option>
+                <option value="__clean" data-i18n-opt="presetClean">🧹 批量清理 (去特殊字符/空格)</option>
+                <option value="__lowerExt" data-i18n-opt="presetLowerExt">📎 扩展名全小写</option>
               </optgroup>
             </select>
             <button id="savePresetBtn" class="icon-btn" title="保存当前规则为预设" data-i18n-title="savePreset">💾</button>
@@ -189,6 +197,7 @@
                 <div class="export-item" data-export="json">📦 <span data-i18n="exportJson">导出 JSON 变更清单</span></div>
                 <div class="export-divider"></div>
                 <div class="export-item" data-export="bat">💻 <span data-i18n="exportBat">导出 Windows 批处理脚本 (.bat)</span></div>
+                <div class="export-item" data-export="ps1">⚡ <span data-i18n="exportPs1">导出 Windows PowerShell 脚本 (.ps1)</span></div>
                 <div class="export-item" data-export="sh">🐧 <span data-i18n="exportSh">导出 Linux/Mac Shell 脚本 (.sh)</span></div>
               </div>
             </div>
@@ -210,6 +219,7 @@
             <span class="stat-value" id="unchangedCount">0</span>
             <span class="stat-label" data-i18n="unchanged">个不变</span>
           </div>
+          <button id="resetCustomEditsBtn" class="reset-custom-btn hidden" title="清除所有手动修改">✏️ <span id="customEditCount">0</span> <span data-i18n="resetCustom">重置手动修改</span></button>
           <label class="preview-filter-toggle">
             <input type="checkbox" id="showChangedOnly">
             <span data-i18n="showChangedOnly">仅显示变更项</span>
@@ -329,6 +339,7 @@
     <div class="ctx-item" data-action="deselect">❌ <span data-i18n="ctxDeselect">取消选择</span></div>
     <div class="ctx-divider"></div>
     <div class="ctx-item" data-action="copy-name">📋 <span data-i18n="ctxCopyName">复制文件名</span></div>
+    <div class="ctx-item" data-action="copy-new-name">📝 <span data-i18n="ctxCopyNewName">复制新文件名</span></div>
     <div class="ctx-item" data-action="locate-preview">🔍 <span data-i18n="ctxLocatePreview">在预览中定位</span></div>
     <div class="ctx-divider"></div>
     <div class="ctx-item" data-action="file-info">ℹ️ <span data-i18n="ctxFileInfo">文件信息</span></div>

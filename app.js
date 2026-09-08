@@ -93,15 +93,43 @@
       rgCleanMedia:'去字幕组/分辨率标签', rgCleanBrackets:'去中英文括号内容', rgSpaceToUnderscore:'空格转下划线',
       // Export menu
       exportCsv:'导出 CSV 日志 (Excel 兼容 UTF-8)', exportJson:'导出 JSON 变更清单',
-      exportBat:'导出 Windows 批处理脚本 (.bat)', exportSh:'导出 Linux/Mac Shell 脚本 (.sh)',
+      exportBat:'导出 Windows 批处理脚本 (.bat)', exportPs1:'导出 Windows PowerShell 脚本 (.ps1)',
+      exportSh:'导出 Linux/Mac Shell 脚本 (.sh)',
       exportSuccess:n=>`已成功导出 ${n}`,
       // Mobile tabs & context menu
       tabFile:'文件', tabRules:'规则', tabPreview:'预览',
       ctxSelectOnly:'仅选择此文件', ctxDeselect:'取消选择',
-      ctxCopyName:'复制文件名', ctxLocatePreview:'在预览中定位',
+      ctxCopyName:'复制文件名', ctxCopyNewName:'复制新文件名', ctxLocatePreview:'在预览中定位',
       ctxFileInfo:'文件信息', fileInfoTitle:'文件信息',
       copied:'已复制到剪贴板', fiName:'文件名', fiSize:'大小',
       fiModified:'修改时间', fiType:'类型', fiPath:'相对路径',
+      // Power enhancements
+      selectFiles:'📄 选择文件', invertSelection:'反选',
+      resetCustom:'重置手动修改', customEditsReset:'已重置所有手动修改',
+      apply:'应用', customPresets:'自定义预设',
+      hasInvalidName:'⚠️ 存在无效文件名(空或含非法字符)',
+      errBlankName:'文件名不能为空',
+      errIllegalChars:'文件名包含非法字符: \\ / : * ? " < > |',
+      errTrailingChar:'文件名不能以点或空格结尾',
+      errReservedName:'文件名不能是系统保留名称 (CON, PRN, AUX, NUL, COM1-9, LPT1-9)',
+      errTooLong:'文件名长度不能超过 255 个字符',
+      noPermission:'文件写入权限未被授予',
+      rCustomSuffix:'后缀文本', rPhCustomSuffix:'如：_backup',
+      rRemoveIllegal:'移除非法字符 (\\ / : * ? " < > |)',
+      rCollapseSpaces:'压缩多余空格与下划线', rTrim:'修剪首尾空格与符号',
+      rgDigitsOnly:'提取数字', rgDatePrefix:'去除日期前缀', rgUnderscoreToSpace:'下划线转空格',
+      preset___photo:'📷 照片整理 (日期+编号)',
+      preset___cleanMedia:'🎬 影视清理 (去字幕组/分辨率标签)',
+      preset___normalizeSpaces:'🗜️ 整理空格 (去首尾/压缩)',
+      preset___webSafe:'🌐 Web安全命名 (kebab-case)',
+      preset___addDatePrefix:'📅 添加日期前缀 (修改日期)',
+      preset___stripDigits:'🔢 去除全部数字',
+      preset___code:'💻 代码规范 (snake_case)',
+      preset___clean:'🧹 批量清理 (去特殊字符/空格)',
+      preset___lowerExt:'📎 扩展名全小写',
+      builtinPresets:'内置预设',
+      rulesCount:n=>`${n} 条规则`,
+      del:'删除',
     },
     en: {
       subtitle:'Batch File Renaming Tool', selectFolder:'📂 Select Folder',
@@ -186,15 +214,43 @@
       rgCleanMedia:'Clean Media/Resolution Tags', rgCleanBrackets:'Remove Bracket Contents', rgSpaceToUnderscore:'Spaces to Underscores',
       // Export menu
       exportCsv:'Export CSV Log (Excel UTF-8)', exportJson:'Export JSON Manifest',
-      exportBat:'Export Windows Script (.bat)', exportSh:'Export Linux/Mac Script (.sh)',
+      exportBat:'Export Windows Script (.bat)', exportPs1:'Export Windows PowerShell Script (.ps1)',
+      exportSh:'Export Linux/Mac Script (.sh)',
       exportSuccess:n=>`Exported ${n} successfully`,
       // Mobile tabs & context menu
       tabFile:'Files', tabRules:'Rules', tabPreview:'Preview',
       ctxSelectOnly:'Select only this', ctxDeselect:'Deselect',
-      ctxCopyName:'Copy filename', ctxLocatePreview:'Locate in preview',
+      ctxCopyName:'Copy filename', ctxCopyNewName:'Copy new filename', ctxLocatePreview:'Locate in preview',
       ctxFileInfo:'File info', fileInfoTitle:'File Information',
       copied:'Copied to clipboard', fiName:'Name', fiSize:'Size',
       fiModified:'Modified', fiType:'Type', fiPath:'Path',
+      // Power enhancements
+      selectFiles:'📄 Select Files', invertSelection:'Invert',
+      resetCustom:'Reset Custom Edits', customEditsReset:'Reset all custom edits',
+      apply:'Apply', customPresets:'Custom Presets',
+      hasInvalidName:'⚠️ Invalid filename (empty or illegal characters)',
+      errBlankName:'Filename cannot be empty',
+      errIllegalChars:'Filename contains illegal characters: \\ / : * ? " < > |',
+      errTrailingChar:'Filename cannot end with dot or space',
+      errReservedName:'Filename cannot be a reserved device name (CON, PRN, AUX, NUL, COM1-9, LPT1-9)',
+      errTooLong:'Filename cannot exceed 255 characters',
+      noPermission:'File write permission not granted',
+      rCustomSuffix:'Custom suffix', rPhCustomSuffix:'e.g. _backup',
+      rRemoveIllegal:'Remove illegal characters (\\ / : * ? " < > |)',
+      rCollapseSpaces:'Collapse duplicate spaces & symbols', rTrim:'Trim leading/trailing spaces & symbols',
+      rgDigitsOnly:'Extract Digits Only', rgDatePrefix:'Remove Date Prefix', rgUnderscoreToSpace:'Underscores to Spaces',
+      preset___photo:'📷 Photo Organizer (Date + Seq)',
+      preset___cleanMedia:'🎬 Clean Media Tags (Release Groups/Resolution)',
+      preset___normalizeSpaces:'🗜️ Normalize Spaces (Trim & Collapse)',
+      preset___webSafe:'🌐 Web-Safe Name (kebab-case + lowercase ext)',
+      preset___addDatePrefix:'📅 Date Prefix (Modified Date YYYY-MM-DD)',
+      preset___stripDigits:'🔢 Remove Digits',
+      preset___code:'💻 Code Standard (snake_case)',
+      preset___clean:'🧹 Batch Clean (Special chars/Spaces)',
+      preset___lowerExt:'📎 Lowercase Extension',
+      builtinPresets:'Built-in Presets',
+      rulesCount:n=>`${n} rules`,
+      del:'Delete',
     }
   };
 
@@ -232,6 +288,7 @@
   const $ = s => document.querySelector(s);
   const dom = {
     selectFolderBtn:$('#selectFolderBtn'),
+    selectFilesBtn:$('#selectFilesBtn'),
     fallbackFolderInput:$('#fallbackFolderInput'),
     fallbackFilesInput:$('#fallbackFilesInput'),
     currentPath:$('#currentPath'),
@@ -239,6 +296,7 @@
     fileListContainer:$('#fileListContainer'), fileList:$('#fileList'),
     fileCount:$('#fileCount'), selectedCount:$('#selectedCount'),
     fileBadge:$('#fileBadge'), selectAllCb:$('#selectAllCheckbox'),
+    invertSelectionBtn:$('#invertSelectionBtn'),
     recursiveToggle:$('#recursiveToggle'),
     sortBy:$('#sortBy'), sortDirBtn:$('#sortDirBtn'),
     addRuleTrigger:$('#addRuleTrigger'), ruleTypeMenu:$('#ruleTypeMenu'),
@@ -250,6 +308,7 @@
     previewBody:$('#previewBody'), previewEmpty:$('#previewEmpty'),
     changeCount:$('#changeCount'), conflictCount:$('#conflictCount'),
     unchangedCount:$('#unchangedCount'), showChangedOnly:$('#showChangedOnly'),
+    resetCustomEditsBtn:$('#resetCustomEditsBtn'), customEditCount:$('#customEditCount'),
     actionInfo:$('#actionInfo'), undoBtn:$('#undoBtn'), executeBtn:$('#executeBtn'),
     exportMenuBtn:$('#exportMenuBtn'), exportMenu:$('#exportMenu'),
     confirmModal:$('#confirmModal'), modalTitle:$('#modalTitle'),
@@ -346,6 +405,7 @@
     [dom.confirmModal,dom.promptModal,dom.shortcutsModal,dom.fileInfoModal,dom.presetManagerModal].forEach(m=>m&&m.classList.remove('open'));
     hideContextMenu();
     hideExportMenu();
+    dom.ruleTypeMenu?.classList.remove('open');
   }
 
   // ═══════════════════════════════════════════════
@@ -366,6 +426,44 @@
     } else {
       // Fallback file input
       dom.fallbackFolderInput.click();
+    }
+  }
+
+  async function selectFiles() {
+    if ('showOpenFilePicker' in window) {
+      try {
+        const handles = await window.showOpenFilePicker({ multiple: true });
+        if (!handles.length) return;
+        state.files = [];
+        state.thumbnailCache.forEach(url => URL.revokeObjectURL(url));
+        state.thumbnailCache.clear();
+        state.isFallbackMode = false;
+        state.dirHandle = null;
+
+        for (let i = 0; i < handles.length; i++) {
+          const handle = handles[i];
+          const file = await handle.getFile();
+          state.files.push({
+            id: 'file_' + i + '_' + file.name,
+            handle: handle,
+            fileObj: file,
+            name: file.name,
+            relPath: '',
+            size: file.size,
+            lastModified: file.lastModified,
+            selected: true,
+            thumbUrl: null
+          });
+        }
+        dom.currentPath.textContent = `📄 ${handles.length} ${state.lang === 'zh' ? '个已选文件' : 'files selected'}`;
+        dom.currentPath.classList.remove('hidden');
+        onFilesLoaded();
+        toast(t('nFiles', handles.length), 'success');
+      } catch (err) {
+        if (err.name !== 'AbortError') dom.fallbackFilesInput.click();
+      }
+    } else {
+      dom.fallbackFilesInput.click();
     }
   }
 
@@ -414,6 +512,7 @@
     dom.extFilter.innerHTML=`<option value="">${t('allTypes')}</option>`+exts.map(e=>`<option value="${e}">.${e}</option>`).join('');
     dom.fileSearch.disabled=false;dom.extFilter.disabled=false;
     dom.selectAllCb.disabled=false;dom.selectAllCb.checked=true;
+    if (dom.invertSelectionBtn) dom.invertSelectionBtn.disabled=false;
     state.lastClickedVisIdx=null;
     renderFileList();updatePreview();
     generateThumbnails();
@@ -467,17 +566,32 @@
     const dir = state.sortDir==='asc'?1:-1;
     state.files.sort((a,b)=>{
       switch(state.sortBy){
-        case 'size': return (a.size-b.size)*dir;
-        case 'date': return (a.lastModified-b.lastModified)*dir;
+        case 'size': {
+          const diff = (a.size-b.size)*dir;
+          if (diff !== 0) return diff;
+          return (a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }) * dir) ||
+                 ((a.relPath || '').localeCompare(b.relPath || '', undefined, { numeric: true, sensitivity: 'base' }) * dir);
+        }
+        case 'date': {
+          const diff = (a.lastModified-b.lastModified)*dir;
+          if (diff !== 0) return diff;
+          return (a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }) * dir) ||
+                 ((a.relPath || '').localeCompare(b.relPath || '', undefined, { numeric: true, sensitivity: 'base' }) * dir);
+        }
         case 'type': {
           const ea=splitFilename(a.name).ext.toLowerCase();
           const eb=splitFilename(b.name).ext.toLowerCase();
           const extCmp = ea.localeCompare(eb, undefined, { numeric: true, sensitivity: 'base' }) * dir;
           if (extCmp !== 0) return extCmp;
-          return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }) * dir;
+          const nameCmp = a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }) * dir;
+          if (nameCmp !== 0) return nameCmp;
+          return (a.relPath || '').localeCompare(b.relPath || '', undefined, { numeric: true, sensitivity: 'base' }) * dir;
         }
-        default:
-          return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }) * dir;
+        default: {
+          const nameCmp = a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }) * dir;
+          if (nameCmp !== 0) return nameCmp;
+          return (a.relPath || '').localeCompare(b.relPath || '', undefined, { numeric: true, sensitivity: 'base' }) * dir;
+        }
       }
     });
   }
@@ -489,6 +603,7 @@
   const BUFFER = 10;
   let _visibleFiles = [];
   let _fileListRaf = null;
+  let _previewRaf = null;
 
   function getVisibleFiles() {
     return state.files.filter(f=>{
@@ -554,10 +669,10 @@
     replace:{find:'',replace:'',useRegex:false,caseSensitive:false,applyTo:'base'},
     prefix:{text:''},
     suffix:{text:''},
-    insert:{text:'',position:0,fromEnd:false},
-    numbering:{start:1,step:1,digits:2,position:'suffix',separator:'_',customText:'IMG_'},
+    insert:{text:'',position:0,fromEnd:false,applyTo:'base'},
+    numbering:{start:1,step:1,digits:2,position:'suffix',separator:'_',customText:'IMG_',customSuffix:''},
     case:{mode:'lower',applyTo:'base'},
-    remove:{from:0,count:0,fromEnd:false,removeSpaces:false,removeSpecial:false,removeDigits:false},
+    remove:{from:0,count:0,fromEnd:false,removeSpaces:false,removeSpecial:false,removeDigits:false,removeIllegal:false,collapseSpaces:false,trim:false},
     extension:{mode:'custom',newExt:''},
     date:{format:'YYYY-MM-DD',position:'prefix',source:'current',separator:'_'},
   };
@@ -606,8 +721,19 @@
         let r;
         if(p.useRegex){
           try{
-            const flags = (p.caseSensitive ? '' : 'i') + (p.find.includes('g') ? '' : 'g');
-            const rx = new RegExp(p.find, flags);
+            let pattern = p.find;
+            let caseSensitive = p.caseSensitive;
+            if (pattern.startsWith('(?i)')) {
+              pattern = pattern.slice(4);
+              caseSensitive = false;
+            }
+            const flags = (caseSensitive ? '' : 'i') + 'g';
+            let rx;
+            try {
+              rx = new RegExp(pattern, flags + 'u');
+            } catch {
+              rx = new RegExp(pattern, flags);
+            }
             r = target.replace(rx, p.replace);
           }catch{return filename}
         } else {
@@ -621,28 +747,38 @@
       case 'prefix': return ext ? (p.text||'') + base + '.' + ext : (p.text||'') + filename;
       case 'suffix': return ext ? base + (p.text||'') + '.' + ext : filename + (p.text||'');
       case 'insert': {
-        const n = ext ? base : filename;
+        const applyTo = p.applyTo || 'base';
+        const target = applyTo === 'all' ? filename : (applyTo === 'ext' ? ext : (ext ? base : filename));
+        if (!target && applyTo === 'ext') return filename;
         const text = p.text || '';
-        let pos = parseInt(p.position) || 0;
+        let pos = parseInt(p.position, 10) || 0;
         if (p.fromEnd) {
-          pos = Math.max(0, n.length - pos);
+          pos = Math.max(0, target.length - pos);
         } else {
-          pos = Math.max(0, Math.min(n.length, pos));
+          pos = Math.max(0, Math.min(target.length, pos));
         }
-        const r = n.substring(0, pos) + text + n.substring(pos);
+        const r = target.substring(0, pos) + text + target.substring(pos);
+        if (applyTo === 'all') return r;
+        if (applyTo === 'ext') return base ? (r ? base + '.' + r : base) : r;
         return ext ? r + '.' + ext : r;
       }
       case 'numbering':{
-        const start = parseInt(p.start) || 1;
-        const step = parseInt(p.step) || 1;
-        const digits = Math.max(1, Math.min(10, parseInt(p.digits) || 1));
+        const start = isNaN(parseInt(p.start, 10)) ? 1 : parseInt(p.start, 10);
+        const step = isNaN(parseInt(p.step, 10)) ? 1 : Math.max(1, parseInt(p.step, 10));
+        const digits = Math.max(1, Math.min(10, parseInt(p.digits, 10) || 1));
         const num = start + index * step;
-        const pad = String(num).padStart(digits, '0');
+        const pad = num < 0
+          ? '-' + String(Math.abs(num)).padStart(digits, '0')
+          : String(num).padStart(digits, '0');
         const s = p.separator !== undefined ? p.separator : '_';
 
         if (p.position === 'replace') {
-          const customPrefix = p.customText || '';
-          return ext ? customPrefix + pad + '.' + ext : customPrefix + pad;
+          const customPrefix = (p.customText !== undefined && p.customText !== '')
+            ? p.customText
+            : (p.customPrefix !== undefined ? p.customPrefix : (p.customText || ''));
+          const customSuffix = p.customSuffix || '';
+          const combined = customPrefix + pad + customSuffix;
+          return ext ? combined + '.' + ext : combined;
         } else if (p.position === 'prefix') {
           return ext ? pad + s + base + '.' + ext : pad + s + filename;
         } else {
@@ -657,9 +793,14 @@
             case 'upper': return str.toUpperCase();
             case 'lower': return str.toLowerCase();
             case 'title':
-              return str.toLowerCase().replace(/(?:^|[\s_\-\.])[a-zA-Z\u00C0-\u024F\u4e00-\u9fff]/gu, c => c.toUpperCase());
+              return str.toLowerCase().replace(/(^|[^\p{L}\p{N}])(\p{L})/gu, (m, sep, letter, offset, fullStr) => {
+                if (sep === "'" && offset > 0 && /[\p{L}]/u.test(fullStr[offset - 1])) {
+                  return sep + letter;
+                }
+                return sep + letter.toUpperCase();
+              });
             case 'camel': {
-              const words = str.trim().split(/[\s_\-]+/).filter(Boolean);
+              const words = str.trim().split(/[\s_\-\.]+/).filter(Boolean);
               if (!words.length) return str;
               return words.map((w, idx) => {
                 const lw = w.toLowerCase();
@@ -667,7 +808,7 @@
               }).join('');
             }
             case 'pascal': {
-              const words = str.trim().split(/[\s_\-]+/).filter(Boolean);
+              const words = str.trim().split(/[\s_\-\.]+/).filter(Boolean);
               if (!words.length) return str;
               return words.map(w => {
                 const lw = w.toLowerCase();
@@ -677,13 +818,13 @@
             case 'snake':
               return str
                 .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
-                .replace(/[\s\-]+/g, '_')
+                .replace(/[\s\-\.]+/g, '_')
                 .replace(/_+/g, '_')
                 .toLowerCase();
             case 'kebab':
               return str
                 .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
-                .replace(/[\s_]+/g, '-')
+                .replace(/[\s_\.]+/g, '-')
                 .replace(/-+/g, '-')
                 .toLowerCase();
             default: return str;
@@ -691,6 +832,9 @@
         };
 
         if (applyTo === 'all') {
+          if (['camel', 'pascal', 'snake', 'kebab'].includes(p.mode)) {
+            return ext ? transform(base) + '.' + (p.mode === 'upper' ? ext.toUpperCase() : ext.toLowerCase()) : transform(filename);
+          }
           return transform(filename);
         } else if (applyTo === 'ext') {
           return ext ? base + '.' + transform(ext) : filename;
@@ -701,11 +845,21 @@
       case 'remove':{
         let n=ext?base:filename;
         if(p.removeSpaces)n=n.replace(/\s+/g,'');
-        if(p.removeSpecial)n=n.replace(/[^\p{L}\p{N}._-]/gu,'');
+        if(p.removeSpecial){
+          const pattern = p.removeSpaces ? /[^\p{L}\p{N}._-]/gu : /[^\p{L}\p{N}\s._-]/gu;
+          n=n.replace(pattern,'');
+        }
+        if(p.removeIllegal)n=n.replace(/[\\/:*?"<>|]/g,'');
         if(p.removeDigits)n=n.replace(/\d+/g,'');
+        if(p.collapseSpaces){
+          n=n.replace(/\s{2,}/g,' ').replace(/_{2,}/g,'_').replace(/-{2,}/g,'-');
+        }
+        if(p.trim){
+          n=n.replace(/^[\s_\-]+|[\s_\-]+$/g,'');
+        }
 
-        const from = parseInt(p.from) || 0;
-        const count = parseInt(p.count) || 0;
+        const from = parseInt(p.from, 10) || 0;
+        const count = parseInt(p.count, 10) || 0;
         if (count > 0) {
           if (p.fromEnd) {
             const start = Math.max(0, n.length - from - count);
@@ -726,9 +880,9 @@
         } else if (mode === 'remove') {
           return base;
         } else {
-          if(!p.newExt && p.newExt !== '') return filename;
-          const clean = p.newExt.replace(/^\./, '').trim();
-          return clean ? base + '.' + clean : base;
+          const clean = (p.newExt || '').replace(/^\./, '').trim();
+          if (!clean) return filename;
+          return base ? base + '.' + clean : clean;
         }
       }
       case 'date':{
@@ -742,13 +896,21 @@
           case 'YYYY.MM.DD':ds=`${y}.${mo}.${d}`;break;
           case 'YYYY_MM_DD':ds=`${y}_${mo}_${d}`;break;
           case 'YYYYMMDD_HHmmss':ds=`${y}${mo}${d}_${h}${mi}${sc}`;break;
+          case 'YYYY-MM-DD_HH-mm':ds=`${y}-${mo}-${d}_${h}-${mi}`;break;
           case 'YYYY-MM-DD HHmm':ds=`${y}-${mo}-${d} ${h}${mi}`;break;
           case 'DD-MM-YYYY':ds=`${d}-${mo}-${y}`;break;
           case 'YYMMDD':ds=`${y2}${mo}${d}`;break;
+          case 'YYYY-MM':ds=`${y}-${mo}`;break;
           default:ds=`${y}-${mo}-${d}`;
         }
         const s=p.separator !== undefined ? p.separator : '_';
-        return p.position==='prefix'?(ext?ds+s+base+'.'+ext:ds+s+filename):(ext?base+s+ds+'.'+ext:filename+s+ds);
+        if (p.position === 'replace') {
+          return ext ? ds + '.' + ext : ds;
+        } else if (p.position === 'prefix') {
+          return ext ? ds + s + base + '.' + ext : ds + s + filename;
+        } else {
+          return ext ? base + s + ds + '.' + ext : filename + s + ds;
+        }
       }
       default:return filename;
     }
@@ -774,15 +936,21 @@
     switch(rule.type){
       case 'replace':{
         const regexStatus = p.useRegex ? (()=>{
-          try{new RegExp(p.find);return`<span class="regex-status valid" title="${t('regexValid')}">✓</span>`}
-          catch{return`<span class="regex-status invalid" title="${t('regexInvalid')}">✗</span>`}
+          try{
+            let pat = p.find || '';
+            if (pat.startsWith('(?i)')) pat = pat.slice(4);
+            new RegExp(pat, 'u');
+            return`<span class="regex-status valid" title="${t('regexValid')}">✓</span>`;
+          }catch{return`<span class="regex-status invalid" title="${t('regexInvalid')}">✗</span>`}
         })() : '';
-        const cls=p.useRegex?(()=>{try{new RegExp(p.find);return'regex-valid'}catch{return'regex-invalid'}})():'';
+        const cls=p.useRegex?(()=>{try{let pat=p.find||'';if(pat.startsWith('(?i)'))pat=pat.slice(4);new RegExp(pat,'u');return'regex-valid'}catch{return'regex-invalid'}})():'';
         const regexPresetsHtml = p.useRegex ? `
           <div class="regex-presets-bar">
             <span class="regex-preset-tag" data-preset-find="\\s*[(\\[（【][^)\\]）】]*[)\\]）】]\\s*" data-preset-rep=" ">${t('rgCleanBrackets')}</span>
-            <span class="regex-preset-tag" data-preset-find="(?i)\\b(1080p|720p|4k|2160p|x264|x265|hevc|web-dl|bluray|hdrip)\\b" data-preset-rep="">${t('rgCleanMedia')}</span>
+            <span class="regex-preset-tag" data-preset-find="\\b(1080p|720p|4k|2160p|x264|x265|hevc|web-dl|bluray|hdrip)\\b" data-preset-rep="">${t('rgCleanMedia')}</span>
             <span class="regex-preset-tag" data-preset-find="\\s+" data-preset-rep="_">${t('rgSpaceToUnderscore')}</span>
+            <span class="regex-preset-tag" data-preset-find="_+" data-preset-rep=" ">${t('rgUnderscoreToSpace')}</span>
+            <span class="regex-preset-tag" data-preset-find="^\\d{4}[-_.]\\d{2}[-_.]\\d{2}[-_.]?" data-preset-rep="">${t('rgDatePrefix')}</span>
           </div>` : '';
         return `
           <div class="rule-field"><label>${t('rFind')}</label><input type="text" value="${escAttr(p.find)}" data-rule="${id}" data-key="find" placeholder="${t('rInputFind')}" class="${cls}">${regexStatus}</div>
@@ -796,24 +964,41 @@
       case 'insert': return `
         ${field(t('rInsertText'),'text','text',t('rPhSuffix'))}
         ${field(t('rInsertPos'),'number','position','0','min="0"')}
+        ${sel(t('rApplyTo'),'applyTo',[['base',t('rApplyBase')],['all',t('rApplyAll')],['ext',t('rApplyExt')]])}
         <div class="rule-field-inline">${chk(t('rFromEnd'),'fromEnd')}</div>`;
       case 'numbering': {
         const isReplace = p.position === 'replace';
         return `
           ${sel(t('rPosition'),'position',[['suffix',t('rPosSuffix')],['prefix',t('rPosPrefix')],['replace',t('rPosReplace')]])}
-          ${isReplace ? field(t('rCustomText'),'text','customText',t('rPhCustomText')) : ''}
-          ${field(t('rStartValue'),'number','start','1','min="0"')}
-          ${field(t('rStep'),'number','step','1','min="1"')}
-          ${field(t('rDigits'),'number','digits','2','min="1" max="10"')}
+          ${isReplace ? `
+            <div class="rule-field-inline">
+              ${field(t('rCustomText'),'text','customText',t('rPhCustomText'))}
+              ${field(t('rCustomSuffix'),'text','customSuffix',t('rPhCustomSuffix'))}
+            </div>` : ''}
+          <div class="rule-field-inline">
+            ${field(t('rStartValue'),'number','start','1','min="0"')}
+            ${field(t('rStep'),'number','step','1','min="1"')}
+            ${field(t('rDigits'),'number','digits','2','min="1" max="10"')}
+          </div>
           ${!isReplace ? field(t('rSeparator'),'text','separator','_') : ''}`;
       }
       case 'case': return `
         ${sel(t('rMode'),'mode',[['lower',t('rLower')],['upper',t('rUpper')],['title',t('rTitle')],['camel',t('rCamel')],['pascal',t('rPascal')],['snake',t('rSnake')],['kebab',t('rKebab')]])}
         ${sel(t('rApplyTo'),'applyTo',[['base',t('rApplyBase')],['all',t('rApplyAll')],['ext',t('rApplyExt')]])}`;
       case 'remove': return `
-        ${field(t('rStartPos'),'number','from','0','min="0"')}
-        ${field(t('rDeleteCount'),'number','count','0','min="0"')}
-        <div class="rule-field-inline">${chk(t('rFromEnd'),'fromEnd')} ${chk(t('rRemoveSpaces'),'removeSpaces')} ${chk(t('rRemoveSpecial'),'removeSpecial')} ${chk(t('rRemoveDigits'),'removeDigits')}</div>`;
+        <div class="rule-field-inline">
+          ${field(t('rStartPos'),'number','from','0','min="0"')}
+          ${field(t('rDeleteCount'),'number','count','0','min="0"')}
+          ${chk(t('rFromEnd'),'fromEnd')}
+        </div>
+        <div class="rule-field-inline">
+          ${chk(t('rRemoveSpaces'),'removeSpaces')}
+          ${chk(t('rRemoveSpecial'),'removeSpecial')}
+          ${chk(t('rRemoveIllegal'),'removeIllegal')}
+          ${chk(t('rRemoveDigits'),'removeDigits')}
+          ${chk(t('rCollapseSpaces'),'collapseSpaces')}
+          ${chk(t('rTrim'),'trim')}
+        </div>`;
       case 'extension': {
         const isCustom = (p.mode || 'custom') === 'custom';
         return `
@@ -821,10 +1006,10 @@
           ${isCustom ? field(t('rNewExt'),'text','newExt',t('rPhExt')) : ''}`;
       }
       case 'date': return `
-        ${sel(t('rFormat'),'format',[['YYYY-MM-DD','2025-05-18'],['YYYYMMDD','20250518'],['YYYY_MM_DD','2025_05_18'],['YYYY.MM.DD','2025.05.18'],['YYYYMMDD_HHmmss','20250518_143000'],['YYYY-MM-DD HHmm','2025-05-18 1430'],['DD-MM-YYYY','18-05-2025'],['YYMMDD','250518']])}
-        ${sel(t('rPosition'),'position',[['prefix',t('rPosPrefix')],['suffix',t('rPosSuffix')]])}
+        ${sel(t('rFormat'),'format',[['YYYY-MM-DD','2025-05-18'],['YYYYMMDD','20250518'],['YYYY_MM_DD','2025_05_18'],['YYYY.MM.DD','2025.05.18'],['YYYYMMDD_HHmmss','20250518_143000'],['YYYY-MM-DD_HH-mm','2025-05-18_14-30'],['YYYY-MM-DD HHmm','2025-05-18 1430'],['DD-MM-YYYY','18-05-2025'],['YYMMDD','250518'],['YYYY-MM','2025-05']])}
+        ${sel(t('rPosition'),'position',[['prefix',t('rPosPrefix')],['suffix',t('rPosSuffix')],['replace',t('rPosReplace')]])}
         ${sel(t('rDateSource'),'source',[['current',t('rCurrentDate')],['modified',t('rModifiedDate')]])}
-        ${field(t('rSeparator'),'text','separator','_')}`;
+        ${p.position !== 'replace' ? field(t('rSeparator'),'text','separator','_') : ''}`;
       default:return '';
     }
   }
@@ -949,12 +1134,38 @@
   let _previewResults = [];
   let _displayResults = [];
 
+  const ILLEGAL_CHARS_RE = /[\\/:*?"<>|]/;
+  const WINDOWS_RESERVED_RE = /^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\..*)?$/i;
+
+  function validateFilename(newName) {
+    if (typeof newName !== 'string' || !newName.trim()) {
+      return { valid: false, reason: 'blank' };
+    }
+    if (ILLEGAL_CHARS_RE.test(newName)) {
+      return { valid: false, reason: 'illegal' };
+    }
+    if (WINDOWS_RESERVED_RE.test(newName)) {
+      return { valid: false, reason: 'reserved' };
+    }
+    if (newName.length > 255) {
+      return { valid: false, reason: 'tooLong' };
+    }
+    const { base: newBase } = splitFilename(newName);
+    if (/[. ]$/.test(newName) || (newBase && /[. ]$/.test(newBase))) {
+      return { valid: false, reason: 'trailing' };
+    }
+    return { valid: true };
+  }
+
   function updatePreview(){
     const sel=state.files.filter(f=>f.selected);
     if(sel.length===0||state.rules.length===0){
       dom.previewBody.innerHTML='';dom.previewEmpty.classList.remove('hidden');
       dom.changeCount.textContent='0';dom.conflictCount.textContent='0';dom.unchangedCount.textContent='0';
-      dom.executeBtn.disabled=true;dom.actionInfo.textContent='';_previewResults=[];_displayResults=[];return;
+      dom.executeBtn.disabled=true;dom.actionInfo.textContent='';_previewResults=[];_displayResults=[];
+      dom.exportMenuBtn.disabled = state.operationLogs.length === 0;
+      if (dom.resetCustomEditsBtn) dom.resetCustomEditsBtn.classList.add('hidden');
+      return;
     }
 
     const results=sel.map((file,i)=>({
@@ -982,12 +1193,21 @@
       dirMap.set(k, (dirMap.get(k)||0)+1);
     });
 
+    let hasInvalidName = false;
     results.forEach(r=>{
       const dir = r.relPath;
       r.changed = r.original !== r.newName;
       const countInDir = newNamesInDir.get(dir)?.get(r.newName.toLowerCase()) || 0;
       const existsUnselected = unselectedInDir.get(dir)?.has(r.newName.toLowerCase()) || false;
-      r.conflict = countInDir > 1 || (r.changed && existsUnselected);
+
+      const val = validateFilename(r.newName);
+      r.invalid = !val.valid;
+      if (r.invalid) {
+        hasInvalidName = true;
+        r.invalidReason = val.reason;
+      }
+
+      r.conflict = countInDir > 1 || (r.changed && existsUnselected) || r.invalid;
     });
 
     const changes=results.filter(r=>r.changed).length;
@@ -1003,7 +1223,21 @@
       renderPreviewVirtualRows();
     }
     dom.executeBtn.disabled=changes===0||conflicts>0;
-    dom.actionInfo.textContent=conflicts>0?t('hasConflict'):changes>0?t('willRename',changes):'';
+    dom.exportMenuBtn.disabled=changes===0 && state.operationLogs.length===0;
+
+    const customCount = Object.keys(state.customEdits).length;
+    if (dom.resetCustomEditsBtn) {
+      dom.resetCustomEditsBtn.classList.toggle('hidden', customCount === 0);
+      if (dom.customEditCount) dom.customEditCount.textContent = customCount;
+    }
+
+    dom.actionInfo.textContent = hasInvalidName
+      ? t('hasInvalidName')
+      : conflicts > 0
+        ? t('hasConflict')
+        : changes > 0
+          ? t('willRename', changes)
+          : '';
   }
 
   function renderPreviewVirtualRows(){
@@ -1020,7 +1254,24 @@
     for(let i=start;i<end;i++){
       const r=_displayResults[i];
       const cls=r.conflict?'conflict':r.changed?(r.isCustom?'changed custom-edit':'changed'):'';
-      const ico=r.conflict?'<span class="conflict-icon">⚠️</span>':r.changed?'<span style="color:var(--accent-2)">●</span>':'<span style="color:var(--text-muted)">○</span>';
+      let ico;
+      if (r.invalid) {
+        let tip;
+        switch (r.invalidReason) {
+          case 'blank': tip = t('errBlankName'); break;
+          case 'illegal': tip = t('errIllegalChars'); break;
+          case 'reserved': tip = t('errReservedName'); break;
+          case 'tooLong': tip = t('errTooLong'); break;
+          default: tip = t('errTrailingChar'); break;
+        }
+        ico = `<span class="conflict-icon" title="${escAttr(tip)}">⛔</span>`;
+      } else if (r.conflict) {
+        ico = `<span class="conflict-icon" title="${escAttr(t('hasConflict'))}">⚠️</span>`;
+      } else if (r.changed) {
+        ico = '<span style="color:var(--accent-2)">●</span>';
+      } else {
+        ico = '<span style="color:var(--text-muted)">○</span>';
+      }
       const newHtml=r.changed?highlightDiff(r.original,r.newName):escHtml(r.newName);
       const customBadge=r.isCustom?`<span class="custom-badge">${t('customEdit')}</span>`:'';
       const fileKey = getFileKey(r.file);
@@ -1043,22 +1294,36 @@
         el.classList.add('editing');
         el.focus();
 
+        let cancelled = false;
         const done=()=>{
+          el.removeEventListener('keydown', onKeyDown);
           el.contentEditable='false';
           el.classList.remove('editing');
-          const val=el.textContent.trim();
-          if(val && val !== targetResult.original){
-            state.customEdits[fileKey] = val;
-          } else {
-            delete state.customEdits[fileKey];
+          if (!cancelled) {
+            const val=el.textContent.trim();
+            if(val && val !== targetResult.original){
+              state.customEdits[fileKey] = val;
+            } else {
+              delete state.customEdits[fileKey];
+            }
           }
           updatePreview();
         };
+
+        const onKeyDown = e => {
+          if(e.key==='Enter'){
+            e.preventDefault();
+            el.blur();
+          } else if(e.key==='Escape'){
+            e.preventDefault();
+            cancelled = true;
+            el.textContent = current;
+            el.blur();
+          }
+        };
+
         el.addEventListener('blur',done,{once:true});
-        el.addEventListener('keydown',e=>{
-          if(e.key==='Enter'){e.preventDefault();el.blur()}
-          if(e.key==='Escape'){delete state.customEdits[fileKey];el.blur()}
-        },{once:true});
+        el.addEventListener('keydown', onKeyDown);
       });
     });
   }
@@ -1069,11 +1334,17 @@
     while(start < o.length && start < n.length && o[start] === n[start]) {
       start++;
     }
+    if (start > 0 && n.charCodeAt(start - 1) >= 0xD800 && n.charCodeAt(start - 1) <= 0xDBFF) {
+      start--;
+    }
     let oEnd = o.length - 1;
     let nEnd = n.length - 1;
     while(oEnd >= start && nEnd >= start && o[oEnd] === n[nEnd]) {
       oEnd--;
       nEnd--;
+    }
+    if (nEnd >= 0 && nEnd < n.length - 1 && n.charCodeAt(nEnd) >= 0xD800 && n.charCodeAt(nEnd) <= 0xDBFF) {
+      nEnd++;
     }
     const prefix = escHtml(n.substring(0, start));
     const changedNew = escHtml(n.substring(start, nEnd + 1));
@@ -1100,13 +1371,31 @@
 
     if(!results.length)return;
 
-    if (state.isFallbackMode || !results[0].file.handle) {
+    if (state.isFallbackMode || !results[0].file.handle || typeof results[0].file.handle.move !== 'function') {
       // Fallback export script
       showExportOptions(results);
       return;
     }
 
     if(!await showConfirm(t('confirmTitle'),t('confirmRename',results.length)))return;
+
+    // Verify write permissions for individual files if loaded without dirHandle
+    for (const r of results) {
+      if (r.file.handle && typeof r.file.handle.queryPermission === 'function') {
+        try {
+          let perm = await r.file.handle.queryPermission({ mode: 'readwrite' });
+          if (perm !== 'granted') {
+            perm = await r.file.handle.requestPermission({ mode: 'readwrite' });
+            if (perm !== 'granted') {
+              toast(t('noPermission'), 'error');
+              return;
+            }
+          }
+        } catch (permErr) {
+          console.warn('Permission check error', permErr);
+        }
+      }
+    }
 
     dom.progressOverlay.classList.remove('hidden');
     dom.progressBar.style.width='0%';dom.progressCount.textContent=`0 / ${results.length}`;
@@ -1142,12 +1431,14 @@
       if(errors>0){dom.progressErrors.classList.remove('hidden');dom.progressErrors.textContent=t('nFailed',errors)}
     };
 
+    const phase1Success = new Set();
     // Phase 1: Move colliding/case-changed files to temporary names
     for(const r of needsTemp){
-      const tempName=`__brp_tmp_${Date.now()}_${Math.random().toString(36).slice(2,7)}_${r.original}`;
+      const tempName=`__brp_tmp_${Date.now()}_${Math.random().toString(36).slice(2,7)}.tmp`;
       try{
         await r.file.handle.move(tempName);
         r.file.name=tempName;
+        phase1Success.add(r);
       }catch(e){
         console.error(e);
         errors++;
@@ -1158,7 +1449,13 @@
     for(const r of direct){
       try{
         await r.file.handle.move(r.newName);
+        const oldKey = getFileKey(r.file);
         r.file.name=r.newName;
+        const newKey = getFileKey(r.file);
+        if (state.thumbnailCache.has(oldKey)) {
+          state.thumbnailCache.set(newKey, state.thumbnailCache.get(oldKey));
+          state.thumbnailCache.delete(oldKey);
+        }
         undoEntries.push({handle:r.file.handle,oldName:r.original,newName:r.newName,relPath:r.relPath});
         updateProgress();
       }catch(e){
@@ -1170,13 +1467,26 @@
 
     // Phase 3: Move temp files to their final names
     for(const r of needsTemp){
+      if (!phase1Success.has(r)) continue;
       try{
         await r.file.handle.move(r.newName);
+        const oldKey = r.relPath ? `${r.relPath}/${r.original}` : r.original;
         r.file.name=r.newName;
+        const newKey = getFileKey(r.file);
+        if (state.thumbnailCache.has(oldKey)) {
+          state.thumbnailCache.set(newKey, state.thumbnailCache.get(oldKey));
+          state.thumbnailCache.delete(oldKey);
+        }
         undoEntries.push({handle:r.file.handle,oldName:r.original,newName:r.newName,relPath:r.relPath});
         updateProgress();
       }catch(e){
-        console.error(e);
+        console.error('Phase 3 move failed, restoring temp file:', e);
+        try {
+          await r.file.handle.move(r.original);
+          r.file.name = r.original;
+        } catch (restoreErr) {
+          console.error('Failed to restore temp file:', restoreErr);
+        }
         errors++;
         updateProgress();
       }
@@ -1193,6 +1503,7 @@
     state.customEdits={};
     if(errors===0)toast(t('successRename',undoEntries.length),'success');
     else toast(t('partialRename',undoEntries.length,errors),'warning');
+    sortFiles();
     renderFileList();updatePreview();
   }
 
@@ -1201,17 +1512,32 @@
     const last=state.undoStack[state.undoStack.length-1];
     if(!await showConfirm(t('undoTitle'),t('confirmUndo',last.entries.length)))return;
     dom.undoBtn.disabled=true;let ok=0;
-    for(const e of last.entries){
+    const entriesToUndo = [...last.entries].reverse();
+    for(const e of entriesToUndo){
       try{
+        const isCaseOnly = e.newName.toLowerCase() === e.oldName.toLowerCase() && e.newName !== e.oldName;
+        if (isCaseOnly) {
+          const temp = `__brp_undo_${Date.now()}_${Math.random().toString(36).slice(2,7)}.tmp`;
+          await e.handle.move(temp);
+        }
         await e.handle.move(e.oldName);
         const f=state.files.find(x=>x.handle===e.handle);
-        if(f)f.name=e.oldName;
+        if(f){
+          const currentKey = getFileKey(f);
+          f.name=e.oldName;
+          const origKey = getFileKey(f);
+          if (state.thumbnailCache.has(currentKey)) {
+            state.thumbnailCache.set(origKey, state.thumbnailCache.get(currentKey));
+            state.thumbnailCache.delete(currentKey);
+          }
+        }
         ok++;
       }catch(err){console.error(err)}
     }
     state.undoStack.pop();
     dom.undoBtn.disabled=!state.undoStack.length;
     toast(t('successUndo',ok),'success');
+    sortFiles();
     renderFileList();updatePreview();
   }
 
@@ -1223,25 +1549,35 @@
     dom.exportMenu.classList.toggle('hidden');
   }
 
-  function getExportEntries() {
-    if (state.operationLogs.length > 0) {
-      return state.operationLogs[state.operationLogs.length - 1].entries;
-    }
-    // Otherwise from preview
+  function getExportEntries(forScript = false) {
     const sel = state.files.filter(f => f.selected);
-    return sel.map((file, i) => ({
+    const previewChanges = sel.map((file, i) => ({
       old: file.name,
       new: computeNewName(file, i),
       relPath: file.relPath || ''
     })).filter(r => r.old !== r.new);
+
+    if (forScript) {
+      return previewChanges;
+    }
+
+    if (state.operationLogs.length > 0) {
+      return state.operationLogs[state.operationLogs.length - 1].entries;
+    }
+    return previewChanges;
   }
 
   function exportData(type) {
-    const entries = getExportEntries();
+    const isScript = type === 'bat' || type === 'sh' || type === 'ps1';
+    const entries = getExportEntries(isScript);
     if (!entries.length) {
       toast(t('noChanges'), 'info');
       hideExportMenu();
       return;
+    }
+
+    if (isScript && _previewResults.some(r => r.conflict)) {
+      toast(t('hasConflict'), 'warning');
     }
 
     const dateStr = new Date().toISOString().slice(0, 10);
@@ -1268,17 +1604,46 @@
       let script = '@echo off\r\nchcp 65001 > nul\r\nREM ====================================\r\nREM Batch Renamer Pro Generated Script\r\nREM ====================================\r\n\r\n';
       entries.forEach(e => {
         const p = e.relPath ? e.relPath.replace(/\//g, '\\') + '\\' : '';
-        script += `ren "${p}${e.old}" "${e.new}"\r\n`;
+        const oldEsc = (p + e.old).replace(/%/g, '%%');
+        const newEsc = e.new.replace(/%/g, '%%');
+        const isCaseOnly = e.old.toLowerCase() === e.new.toLowerCase() && e.old !== e.new;
+        if (isCaseOnly) {
+          script += `ren "${oldEsc}" "${newEsc}.tmp"\r\n`;
+          script += `ren "${p}${newEsc}.tmp" "${newEsc}"\r\n`;
+        } else {
+          script += `ren "${oldEsc}" "${newEsc}"\r\n`;
+        }
       });
       script += '\r\necho Renaming complete!\r\npause\r\n';
-      const blob = new Blob([script], { type: 'text/plain;charset=utf-8;' });
+      const blob = new Blob(['\uFEFF' + script], { type: 'text/plain;charset=utf-8;' });
       downloadBlob(blob, `rename-script-${dateStr}.bat`);
       toast(t('exportSuccess', '.bat'), 'success');
+    } else if (type === 'ps1') {
+      let script = '# ====================================\r\n# Batch Renamer Pro Generated Script\r\n# ====================================\r\n[Console]::OutputEncoding = [System.Text.Encoding]::UTF8\r\n\r\n';
+      entries.forEach(e => {
+        const p = e.relPath ? e.relPath.replace(/\//g, '\\') + '\\' : '';
+        const oldEsc = (p + e.old).replace(/'/g, "''");
+        const newEsc = e.new.replace(/'/g, "''");
+        const isCaseOnly = e.old.toLowerCase() === e.new.toLowerCase() && e.old !== e.new;
+        if (isCaseOnly) {
+          const tmpName = '__brp_' + Math.random().toString(36).slice(2, 8) + '.tmp';
+          script += `Rename-Item -LiteralPath '${oldEsc}' -NewName '${tmpName}' -ErrorAction Continue\r\n`;
+          script += `Rename-Item -LiteralPath '${(p + tmpName).replace(/'/g, "''")}' -NewName '${newEsc}' -ErrorAction Continue\r\n`;
+        } else {
+          script += `Rename-Item -LiteralPath '${oldEsc}' -NewName '${newEsc}' -ErrorAction Continue\r\n`;
+        }
+      });
+      script += '\r\nWrite-Host "Renaming complete!" -ForegroundColor Green\r\nRead-Host "Press Enter to exit"\r\n';
+      const blob = new Blob(['\uFEFF' + script], { type: 'text/plain;charset=utf-8;' });
+      downloadBlob(blob, `rename-script-${dateStr}.ps1`);
+      toast(t('exportSuccess', '.ps1'), 'success');
     } else if (type === 'sh') {
       let script = '#!/bin/bash\n# ====================================\n# Batch Renamer Pro Generated Script\n# ====================================\n\n';
       entries.forEach(e => {
         const p = e.relPath ? e.relPath + '/' : '';
-        script += `mv "${p}${e.old}" "${p}${e.new}"\n`;
+        const oldEsc = (p + e.old).replace(/\\/g, '\\\\').replace(/\$/g, '\\$').replace(/`/g, '\\`').replace(/"/g, '\\"');
+        const newEsc = (p + e.new).replace(/\\/g, '\\\\').replace(/\$/g, '\\$').replace(/`/g, '\\`').replace(/"/g, '\\"');
+        script += `mv "${oldEsc}" "${newEsc}"\n`;
       });
       script += '\necho "Renaming complete!"\n';
       const blob = new Blob([script], { type: 'text/x-sh;charset=utf-8;' });
@@ -1306,14 +1671,28 @@
     ],
     __cleanMedia:[
       {type:'replace',params:{find:'\\s*[(\\[（【][^)\\]）】]*[)\\]）】]\\s*',replace:' ',useRegex:true,caseSensitive:false,applyTo:'base'}},
-      {type:'replace',params:{find:'(?i)\\b(1080p|720p|4k|2160p|x264|x265|hevc|web-dl|bluray|hdrip)\\b',replace:'',useRegex:true,caseSensitive:false,applyTo:'base'}},
-      {type:'remove',params:{removeSpaces:false,removeSpecial:false,from:0,count:0}}
+      {type:'replace',params:{find:'\\b(1080p|720p|4k|2160p|x264|x265|hevc|web-dl|bluray|hdrip)\\b',replace:'',useRegex:true,caseSensitive:false,applyTo:'base'}},
+      {type:'remove',params:{removeSpaces:false,removeSpecial:false,collapseSpaces:true,trim:true,from:0,count:0}}
+    ],
+    __normalizeSpaces:[
+      {type:'remove',params:{removeSpaces:false,removeSpecial:false,removeDigits:false,removeIllegal:false,collapseSpaces:true,trim:true,from:0,count:0}}
+    ],
+    __webSafe:[
+      {type:'remove',params:{removeSpaces:false,removeSpecial:true,removeDigits:false,removeIllegal:true,collapseSpaces:true,trim:true,from:0,count:0}},
+      {type:'case',params:{mode:'kebab',applyTo:'base'}},
+      {type:'extension',params:{mode:'lower'}}
+    ],
+    __addDatePrefix:[
+      {type:'date',params:{format:'YYYY-MM-DD',position:'prefix',source:'modified',separator:'_'}}
+    ],
+    __stripDigits:[
+      {type:'remove',params:{removeDigits:true,removeSpaces:false,removeSpecial:false,removeIllegal:false,collapseSpaces:false,trim:false,from:0,count:0}}
     ],
     __code:[
       {type:'case',params:{mode:'snake',applyTo:'base'}}
     ],
     __clean:[
-      {type:'remove',params:{from:0,count:0,removeSpaces:true,removeSpecial:true,removeDigits:false}}
+      {type:'remove',params:{from:0,count:0,removeSpaces:true,removeSpecial:true,removeDigits:false,removeIllegal:true,collapseSpaces:true,trim:true}}
     ],
     __lowerExt:[
       {type:'extension',params:{mode:'lower'}}
@@ -1341,14 +1720,16 @@
   function applyPreset(key){
     if(!key)return;
     let rules;
+    let presetLabel = '';
     if(key.startsWith('custom:')){
       const name=key.slice(7);
       const saved=JSON.parse(localStorage.getItem('brp_presets')||'{}');
       rules=saved[name];if(!rules)return;
-      toast(t('presetLoaded',name),'success');
+      presetLabel = name;
     } else {
       rules=BUILTIN_PRESETS[key];if(!rules)return;
-      toast(t('presetLoaded',key.replace('__','')),'success');
+      const transKey = 'preset_' + key;
+      presetLabel = t(transKey) || key.replace('__','');
     }
     state.rules=rules.map(r=>({
       id:uid(),
@@ -1360,6 +1741,7 @@
     state.customEdits={};
     renderRules();
     updatePreview();
+    toast(t('presetLoaded',presetLabel),'success');
   }
 
   async function savePreset(){
@@ -1380,21 +1762,55 @@
 
   function renderPresetManagerList(){
     const saved=JSON.parse(localStorage.getItem('brp_presets')||'{}');
-    const names=Object.keys(saved);
-    if (!names.length) {
-      dom.presetListContainer.innerHTML=`<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:0.85rem">${t('noCustomPresets')}</div>`;
-      return;
+    const customNames=Object.keys(saved);
+
+    const builtinKeys = Object.keys(BUILTIN_PRESETS);
+    const builtinHtml = builtinKeys.map(key => {
+      const transKey = 'preset_' + key;
+      const label = t(transKey) || key;
+      const ruleCount = BUILTIN_PRESETS[key].length;
+      return `
+        <div class="preset-list-item builtin">
+          <div>
+            <span class="preset-item-name">${escHtml(label)}</span>
+            <span class="preset-item-rules-count">(${t('rulesCount', ruleCount)})</span>
+          </div>
+          <div class="preset-item-actions">
+            <button class="btn btn-secondary btn-sm" data-apply-preset="${escAttr(key)}">${t('apply')}</button>
+          </div>
+        </div>`;
+    }).join('');
+
+    let customHtml = '';
+    if (customNames.length) {
+      customHtml = customNames.map(name => `
+        <div class="preset-list-item">
+          <div>
+            <span class="preset-item-name">⭐ ${escHtml(name)}</span>
+            <span class="preset-item-rules-count">(${t('rulesCount', saved[name].length)})</span>
+          </div>
+          <div class="preset-item-actions">
+            <button class="btn btn-secondary btn-sm" data-apply-preset="custom:${escAttr(name)}">${t('apply')}</button>
+            <button class="rule-action-btn delete" data-delete-preset="${escAttr(name)}" title="${t('del')}">✕</button>
+          </div>
+        </div>`).join('');
+    } else {
+      customHtml = `<div style="padding:12px;text-align:center;color:var(--text-muted);font-size:0.85rem">${t('noCustomPresets')}</div>`;
     }
-    dom.presetListContainer.innerHTML = names.map(name => `
-      <div class="preset-list-item">
-        <div>
-          <span class="preset-item-name">⭐ ${escHtml(name)}</span>
-          <span class="preset-item-rules-count">(${saved[name].length} rules)</span>
-        </div>
-        <div class="preset-item-actions">
-          <button class="rule-action-btn delete" data-delete-preset="${escAttr(name)}" title="Delete">✕</button>
-        </div>
-      </div>`).join('');
+
+    dom.presetListContainer.innerHTML = `
+      <div class="preset-section-title">${t('builtinPresets')}</div>
+      ${builtinHtml}
+      <div class="preset-section-title" style="margin-top:14px">${t('customPresets')}</div>
+      ${customHtml}
+    `;
+
+    dom.presetListContainer.querySelectorAll('[data-apply-preset]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        applyPreset(btn.dataset.applyPreset);
+        dom.presetManagerModal.classList.remove('open');
+      });
+    });
 
     dom.presetListContainer.querySelectorAll('[data-delete-preset]').forEach(btn => {
       btn.addEventListener('click', async () => {
@@ -1464,6 +1880,12 @@
     document.querySelectorAll('[data-i18n-opt]').forEach(el => {
       el.textContent = t(el.dataset.i18nOpt);
     });
+    document.querySelectorAll('[data-i18n-optgroup]').forEach(el => {
+      el.label = t(el.dataset.i18nOptgroup);
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      el.title = t(el.dataset.i18nTitle);
+    });
     renderFileList();renderRules();updatePreview();
   }
 
@@ -1485,19 +1907,59 @@
       e.preventDefault();dragCounter=0;dom.dropZone.classList.add('hidden');dom.dropZone.classList.remove('active');
       const items=[...e.dataTransfer.items];
       for(const item of items){
-        if(item.kind==='file'){
-          if ('getAsFileSystemHandle' in item) {
-            const handle=await item.getAsFileSystemHandle();
-            if(handle && handle.kind==='directory'){
-              state.dirHandle=handle;
-              dom.currentPath.textContent=`📁 ${handle.name}`;dom.currentPath.classList.remove('hidden');
-              state.isFallbackMode = false;
-              await loadFiles();toast(t('loadedFolder',handle.name),'success');
-              return;
-            }
+        if(item.kind==='file' && 'getAsFileSystemHandle' in item){
+          const handle=await item.getAsFileSystemHandle();
+          if(handle && handle.kind==='directory'){
+            state.dirHandle=handle;
+            dom.currentPath.textContent=`📁 ${handle.name}`;dom.currentPath.classList.remove('hidden');
+            state.isFallbackMode = false;
+            await loadFiles();toast(t('loadedFolder',handle.name),'success');
+            return;
           }
         }
       }
+
+      // Check if dropped items are individual files and support FileSystemHandle
+      if ('getAsFileSystemHandle' in DataTransferItem.prototype) {
+        const fileHandles = [];
+        for (const item of items) {
+          if (item.kind === 'file') {
+            try {
+              const h = await item.getAsFileSystemHandle();
+              if (h && h.kind === 'file') fileHandles.push(h);
+            } catch {}
+          }
+        }
+        if (fileHandles.length > 0) {
+          state.files = [];
+          state.thumbnailCache.forEach(url => URL.revokeObjectURL(url));
+          state.thumbnailCache.clear();
+          state.isFallbackMode = false;
+          state.dirHandle = null;
+
+          for (let i = 0; i < fileHandles.length; i++) {
+            const handle = fileHandles[i];
+            const file = await handle.getFile();
+            state.files.push({
+              id: 'file_' + i + '_' + file.name,
+              handle: handle,
+              fileObj: file,
+              name: file.name,
+              relPath: '',
+              size: file.size,
+              lastModified: file.lastModified,
+              selected: true,
+              thumbUrl: null
+            });
+          }
+          dom.currentPath.textContent = `📄 ${fileHandles.length} ${state.lang === 'zh' ? '个已选文件' : 'files selected'}`;
+          dom.currentPath.classList.remove('hidden');
+          onFilesLoaded();
+          toast(t('nFiles', fileHandles.length), 'success');
+          return;
+        }
+      }
+
       if (e.dataTransfer.files.length) {
         handleFallbackFiles(e.dataTransfer.files);
       }
@@ -1528,6 +1990,19 @@
         f.selected=false;renderFileList();updatePreview();break;
       case 'copy-name':
         navigator.clipboard.writeText(f.name).then(()=>toast(t('copied'),'success'));break;
+      case 'copy-new-name': {
+        const prev = _previewResults.find(r => r.file === f);
+        let newName;
+        if (prev) {
+          newName = prev.newName;
+        } else {
+          const sel = state.files.filter(x => x.selected);
+          const selIdx = sel.indexOf(f);
+          newName = computeNewName(f, selIdx >= 0 ? selIdx : 0);
+        }
+        navigator.clipboard.writeText(newName).then(()=>toast(t('copied'),'success'));
+        break;
+      }
       case 'locate-preview':
         if(window.innerWidth<1024)switchTab('preview');
         const idx=_previewResults.findIndex(r=>r.original===f.name);
@@ -1585,22 +2060,24 @@
     document.addEventListener('keydown',e=>{
       if(e.target.matches('input,select,[contenteditable="true"]')&&e.key!=='Escape')return;
       if(e.key==='Escape'){closeAllModals();return}
-      if(e.ctrlKey&&e.key==='o'){e.preventDefault();selectFolder()}
-      if(e.ctrlKey&&e.key==='z'){e.preventDefault();if(!dom.undoBtn.disabled)undoRename()}
-      if(e.ctrlKey&&e.key==='Enter'){e.preventDefault();if(!dom.executeBtn.disabled)executeRename()}
-      if(e.ctrlKey&&!e.shiftKey&&e.key==='a'){
+      const isCmdOrCtrl = e.metaKey || e.ctrlKey;
+      const key = e.key.toLowerCase();
+      if(isCmdOrCtrl&&key==='o'){e.preventDefault();selectFolder()}
+      if(isCmdOrCtrl&&key==='z'){e.preventDefault();if(!dom.undoBtn.disabled)undoRename()}
+      if(isCmdOrCtrl&&key==='enter'){e.preventDefault();if(!dom.executeBtn.disabled)executeRename()}
+      if(isCmdOrCtrl&&!e.shiftKey&&key==='a'){
         e.preventDefault();const allSel=_visibleFiles.every(f=>f.selected);
         _visibleFiles.forEach(f=>f.selected=!allSel);
         renderFileList();updatePreview();
       }
-      if(e.ctrlKey&&e.shiftKey&&e.key==='A'){
+      if(isCmdOrCtrl&&e.shiftKey&&key==='a'){
         e.preventDefault();state.files.forEach(f=>f.selected=!f.selected);
         renderFileList();updatePreview();
       }
-      if(e.ctrlKey&&e.key==='f'){e.preventDefault();dom.fileSearch.focus()}
-      if(e.ctrlKey&&e.key==='r'){e.preventDefault();dom.ruleTypeMenu.classList.toggle('open')}
-      if(e.ctrlKey&&e.key==='e'){e.preventDefault();if(!dom.exportMenuBtn.disabled)showExportOptions()}
-      if(e.ctrlKey&&e.key==='/'){e.preventDefault();dom.shortcutsModal.classList.add('open')}
+      if(isCmdOrCtrl&&key==='f'){e.preventDefault();dom.fileSearch.focus()}
+      if(isCmdOrCtrl&&key==='r'){e.preventDefault();dom.ruleTypeMenu.classList.toggle('open')}
+      if(isCmdOrCtrl&&key==='e'){e.preventDefault();if(!dom.exportMenuBtn.disabled)showExportOptions()}
+      if(isCmdOrCtrl&&key==='/'){e.preventDefault();dom.shortcutsModal.classList.add('open')}
     });
   }
 
@@ -1619,6 +2096,7 @@
 
     // File panel
     dom.selectFolderBtn.addEventListener('click',selectFolder);
+    dom.selectFilesBtn?.addEventListener('click',selectFiles);
     dom.fallbackFolderInput.addEventListener('change',e=>{if(e.target.files.length)handleFallbackFiles(e.target.files)});
     dom.fallbackFilesInput.addEventListener('change',e=>{if(e.target.files.length)handleFallbackFiles(e.target.files)});
 
@@ -1626,6 +2104,11 @@
     dom.fileSearch.addEventListener('input',e=>debouncedSearch(e.target.value));
     dom.extFilter.addEventListener('change',e=>{state.extFilter=e.target.value;renderFileList()});
     dom.selectAllCb.addEventListener('change',e=>{getVisibleFiles().forEach(f=>f.selected=e.target.checked);renderFileList();updatePreview()});
+    dom.invertSelectionBtn?.addEventListener('click',()=>{
+      getVisibleFiles().forEach(f=>f.selected=!f.selected);
+      renderFileList();
+      updatePreview();
+    });
 
     // Shift+Click range select
     dom.fileList.addEventListener('click',e=>{
@@ -1672,13 +2155,14 @@
     dom.fileInfoModal.addEventListener('click',e=>{if(e.target===dom.fileInfoModal)dom.fileInfoModal.classList.remove('open')});
 
     // Virtual scroll with rAF
+    let _previewListRaf = null;
     dom.fileListContainer.addEventListener('scroll',()=>{
       if(_fileListRaf) cancelAnimationFrame(_fileListRaf);
       _fileListRaf = requestAnimationFrame(()=>{if(_visibleFiles.length)renderVirtualRows()});
     });
     dom.previewContainer.addEventListener('scroll',()=>{
-      if(_fileListRaf) cancelAnimationFrame(_fileListRaf);
-      _fileListRaf = requestAnimationFrame(()=>{if(_displayResults.length)renderPreviewVirtualRows()});
+      if(_previewListRaf) cancelAnimationFrame(_previewListRaf);
+      _previewListRaf = requestAnimationFrame(()=>{if(_displayResults.length)renderPreviewVirtualRows()});
     });
 
     // Sort
@@ -1716,6 +2200,11 @@
 
     // Preview
     dom.showChangedOnly.addEventListener('change',e=>{state.showChangedOnly=e.target.checked;updatePreview()});
+    dom.resetCustomEditsBtn?.addEventListener('click',()=>{
+      state.customEdits={};
+      updatePreview();
+      toast(t('customEditsReset'),'info');
+    });
     // Execute & Undo
     dom.executeBtn.addEventListener('click',executeRename);
     dom.undoBtn.addEventListener('click',undoRename);
