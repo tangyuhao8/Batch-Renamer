@@ -23,7 +23,7 @@
       </div>
       <div class="header-actions">
         <span id="currentPath" class="header-path hidden"></span>
-        <button id="shortcutsBtn" class="icon-btn" title="快捷键">⌨️</button>
+        <button id="shortcutsBtn" class="icon-btn" title="快捷键 (Ctrl+/)">⌨️</button>
         <button id="themeToggle" class="icon-btn" title="切换主题">🌙</button>
         <button id="langToggle" class="icon-btn" title="Switch Language">中/En</button>
       </div>
@@ -55,7 +55,9 @@
         </div>
         <div class="file-toolbar">
           <button id="selectFolderBtn" class="folder-btn" data-i18n="selectFolder">📂 选择文件夹</button>
-          <input type="search" id="fileSearch" class="search-input" placeholder="搜索文件名…" disabled>
+          <input type="file" id="fallbackFolderInput" webkitdirectory directory multiple class="hidden">
+          <input type="file" id="fallbackFilesInput" multiple class="hidden">
+          <input type="search" id="fileSearch" class="search-input" placeholder="搜索文件名… (Ctrl+F)" disabled>
           <select id="extFilter" class="filter-select" disabled>
             <option value="" data-i18n-opt="allTypes">全部类型</option>
           </select>
@@ -100,12 +102,15 @@
             <select id="presetSelect" class="preset-select">
               <option value="" data-i18n-opt="selectPreset">选择预设…</option>
               <optgroup label="内置预设" data-i18n-optgroup="builtinPresets">
-                <option value="__photo">📷 照片整理</option>
-                <option value="__code">💻 代码规范</option>
-                <option value="__clean">🧹 批量清理</option>
+                <option value="__photo">📷 照片整理 (日期+编号)</option>
+                <option value="__cleanMedia">🎬 影视清理 (去字幕组/分辨率标签)</option>
+                <option value="__code">💻 代码规范 (snake_case)</option>
+                <option value="__clean">🧹 批量清理 (去特殊字符/空格)</option>
+                <option value="__lowerExt">📎 扩展名全小写</option>
               </optgroup>
             </select>
             <button id="savePresetBtn" class="icon-btn" title="保存当前规则为预设" data-i18n-title="savePreset">💾</button>
+            <button id="managePresetsBtn" class="icon-btn" title="预设管理器" data-i18n-title="managePresets">⚙️</button>
           </div>
         </div>
         <div class="rules-toolbar">
@@ -127,25 +132,30 @@
                 <span class="option-label" data-i18n="ruleSuffix">添加后缀</span>
                 <span class="option-desc" data-i18n="ruleSuffixDesc">文件名后</span>
               </div>
+              <div class="rule-type-option" data-type="insert">
+                <span class="option-icon">📌</span>
+                <span class="option-label" data-i18n="ruleInsert">插入字符</span>
+                <span class="option-desc" data-i18n="ruleInsertDesc">指定位置插入</span>
+              </div>
               <div class="rule-type-option" data-type="numbering">
                 <span class="option-icon">🔢</span>
                 <span class="option-label" data-i18n="ruleNumbering">序号编号</span>
-                <span class="option-desc" data-i18n="ruleNumberingDesc">递增编号</span>
+                <span class="option-desc" data-i18n="ruleNumberingDesc">递增编号/替换</span>
               </div>
               <div class="rule-type-option" data-type="case">
                 <span class="option-icon">🔤</span>
                 <span class="option-label" data-i18n="ruleCase">大小写转换</span>
-                <span class="option-desc" data-i18n="ruleCaseDesc">大/小/首字母</span>
+                <span class="option-desc" data-i18n="ruleCaseDesc">大/小/首字母/驼峰/蛇形</span>
               </div>
               <div class="rule-type-option" data-type="remove">
                 <span class="option-icon">✂️</span>
                 <span class="option-label" data-i18n="ruleRemove">删除字符</span>
-                <span class="option-desc" data-i18n="ruleRemoveDesc">指定位置/类型</span>
+                <span class="option-desc" data-i18n="ruleRemoveDesc">位置/空格/特殊字符</span>
               </div>
               <div class="rule-type-option" data-type="extension">
                 <span class="option-icon">📎</span>
                 <span class="option-label" data-i18n="ruleExtension">修改扩展名</span>
-                <span class="option-desc" data-i18n="ruleExtensionDesc">更改后缀</span>
+                <span class="option-desc" data-i18n="ruleExtensionDesc">更改/小写/大写/删除</span>
               </div>
               <div class="rule-type-option" data-type="date">
                 <span class="option-icon">📅</span>
@@ -172,7 +182,16 @@
         <div class="panel-header">
           <span class="panel-title" data-i18n="preview">预览</span>
           <div class="preview-header-actions">
-            <button id="exportLogBtn" class="icon-btn" title="导出操作日志" disabled>📋</button>
+            <div class="export-dropdown-wrapper">
+              <button id="exportMenuBtn" class="icon-btn" title="导出操作日志 / 脚本" disabled>📋 ▾</button>
+              <div id="exportMenu" class="export-menu hidden">
+                <div class="export-item" data-export="csv">📊 <span data-i18n="exportCsv">导出 CSV 日志 (Excel兼容)</span></div>
+                <div class="export-item" data-export="json">📦 <span data-i18n="exportJson">导出 JSON 变更清单</span></div>
+                <div class="export-divider"></div>
+                <div class="export-item" data-export="bat">💻 <span data-i18n="exportBat">导出 Windows 批处理脚本 (.bat)</span></div>
+                <div class="export-item" data-export="sh">🐧 <span data-i18n="exportSh">导出 Linux/Mac Shell 脚本 (.sh)</span></div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="preview-toolbar">
@@ -243,8 +262,28 @@
         <input type="text" id="promptInput" class="prompt-input" placeholder="输入预设名称…">
       </div>
       <div class="modal-footer">
-        <button id="promptCancelBtn" class="btn btn-secondary">取消</button>
-        <button id="promptConfirmBtn" class="btn btn-primary">保存</button>
+        <button id="promptCancelBtn" class="btn btn-secondary" data-i18n="cancel">取消</button>
+        <button id="promptConfirmBtn" class="btn btn-primary" data-i18n="confirm">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preset Manager Modal -->
+  <div id="presetManagerModal" class="modal-overlay">
+    <div class="modal modal-wide">
+      <div class="modal-header" data-i18n="presetManagerTitle">预设管理器</div>
+      <div class="modal-body">
+        <div class="preset-manager-toolbar">
+          <button id="exportPresetsBtn" class="btn btn-secondary" data-i18n="exportPresets">📤 导出全部预设</button>
+          <label class="btn btn-secondary import-preset-label">
+            <span data-i18n="importPresets">📥 导入预设</span>
+            <input type="file" id="importPresetsInput" accept=".json" class="hidden">
+          </label>
+        </div>
+        <div id="presetListContainer" class="preset-list-container"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="presetManagerCloseBtn" class="btn btn-secondary" data-i18n="close">关闭</button>
       </div>
     </div>
   </div>
@@ -259,7 +298,9 @@
         <div class="shortcut-row"><kbd>Ctrl</kbd>+<kbd>Z</kbd><span data-i18n="scUndo">撤销</span></div>
         <div class="shortcut-row"><kbd>Ctrl</kbd>+<kbd>A</kbd><span data-i18n="scSelectAll">全选</span></div>
         <div class="shortcut-row"><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd><span data-i18n="scInvertSel">反选</span></div>
-        <div class="shortcut-row"><kbd>Ctrl</kbd>+<kbd>E</kbd><span data-i18n="scExport">导出日志</span></div>
+        <div class="shortcut-row"><kbd>Ctrl</kbd>+<kbd>F</kbd><span data-i18n="scSearch">聚焦搜索框</span></div>
+        <div class="shortcut-row"><kbd>Ctrl</kbd>+<kbd>R</kbd><span data-i18n="scAddRule">添加规则菜单</span></div>
+        <div class="shortcut-row"><kbd>Ctrl</kbd>+<kbd>E</kbd><span data-i18n="scExport">导出日志 / 脚本</span></div>
         <div class="shortcut-row"><kbd>Esc</kbd><span data-i18n="scClose">关闭弹窗</span></div>
       </div>
       <div class="modal-footer">
